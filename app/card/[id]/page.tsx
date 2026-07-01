@@ -105,9 +105,16 @@ export default async function CardPage({ params }: Props) {
 
       {/* 명함 헤더 */}
       <section
-        className="text-white px-6 pt-10 pb-8"
+        className="text-white px-6 pt-10 pb-8 relative"
         style={{ background: headerBg }}
       >
+        {/* 명함형 홈페이지 뱃지 */}
+        <div className="flex justify-center mb-4">
+          <span className="text-xs px-3 py-1 rounded-full border border-white/30 text-white/60 tracking-widest">
+            명함형 홈페이지
+          </span>
+        </div>
+
         {card.profilePhoto && (
           <div className="flex justify-center mb-5">
             <img
@@ -131,6 +138,11 @@ export default async function CardPage({ params }: Props) {
         {card.bio && (
           <p className="text-sm leading-relaxed mt-4 text-center" style={{ color: rgba(tc, 0.8) }}>{card.bio}</p>
         )}
+
+        {/* 스크롤 힌트 */}
+        <div className="text-center mt-6">
+          <p className="text-xs" style={{ color: rgba(tc, 0.45) }}>화면을 아래로 내리면 더 많은 정보를 볼 수 있어요 ↓</p>
+        </div>
       </section>
 
       {/* 연락처 + 예약 버튼 */}
