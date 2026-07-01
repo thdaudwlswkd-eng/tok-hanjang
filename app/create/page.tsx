@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import PhotoStep from '@/components/editor/PhotoStep'
@@ -50,6 +50,35 @@ function CreatePageInner() {
   const [videoUrl, setVideoUrl] = useState('')
   const [address, setAddress] = useState('')
   const [hours, setHours] = useState<BusinessHours | null>(null)
+  const [loaded, setLoaded] = useState(false)
+
+  // 기존 저장 데이터 불러오기
+  useEffect(() => {
+    if (!id) return
+    fetch(`/api/cards/${id}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data) return
+        if (data.photos) setPhotos(Array.isArray(data.photos) ? data.photos : JSON.parse(data.photos))
+        if (data.profilePhoto) setProfilePhoto(data.profilePhoto)
+        if (data.name) setName(data.name)
+        if (data.title) setTitle(data.title)
+        if (data.bio) setBio(data.bio)
+        if (data.career) setCareer(data.career)
+        if (data.theme) setTheme(data.theme)
+        if (data.textColor) setTextColor(data.textColor)
+        if (data.phone) setPhone(data.phone)
+        if (data.kakaoLink) setKakaoLink(data.kakaoLink)
+        if (data.snsLinks) setSnsLinks(typeof data.snsLinks === 'string' ? JSON.parse(data.snsLinks) : data.snsLinks)
+        if (data.bookingEnabled !== undefined) setBookingEnabled(data.bookingEnabled)
+        if (data.bookingSettings) setBookingSettings(typeof data.bookingSettings === 'string' ? JSON.parse(data.bookingSettings) : data.bookingSettings)
+        if (data.videoUrl) setVideoUrl(data.videoUrl)
+        if (data.address) setAddress(data.address)
+        if (data.hours) setHours(typeof data.hours === 'string' ? JSON.parse(data.hours) : data.hours)
+        setLoaded(true)
+      })
+      .catch(() => setLoaded(true))
+  }, [id])
 
   const getPayload = useCallback(() => ({
     photos,
@@ -120,6 +149,12 @@ function CreatePageInner() {
   }
 
   const isLast = step === STEPS.length - 1
+
+  if (!loaded) return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <p className="text-slate-400 text-sm">불러오는 중...</p>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col max-w-lg mx-auto">
