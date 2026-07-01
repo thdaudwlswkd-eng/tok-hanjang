@@ -9,6 +9,7 @@ interface BookingSettings {
   endTime: string
   maxGuests: number
   blockedDates: string[]
+  message?: string
 }
 
 interface Props {
@@ -199,6 +200,12 @@ export default function BookingModal({ cardId, bookingSettings, onClose }: Props
               <h2 className="text-lg font-bold text-slate-800">📅 예약 신청</h2>
               <button type="button" onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 text-sm">✕</button>
             </div>
+
+            {bookingSettings?.message && (
+              <div className="mb-4 px-4 py-3 bg-blue-50 border border-blue-100 rounded-2xl text-sm text-blue-800 whitespace-pre-wrap">
+                {bookingSettings.message}
+              </div>
+            )}
 
             <div className="space-y-4">
               {/* 이름 */}
