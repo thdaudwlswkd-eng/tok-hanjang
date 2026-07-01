@@ -22,3 +22,6 @@ public/uploads/
 Thumbs.db
 
 .vercel
+
+# deploy script (contains token)
+push-to-github.bat
