@@ -250,32 +250,6 @@ export default function ContactStep({
   phone, kakaoLink, bookingEnabled, bookingSettings,
   onChange, onBookingChange, onBookingSettingsChange, cardId
 }: Props) {
-  const [blockInput, setBlockInput] = useState('')
-  const [showAdvanced, setShowAdvanced] = useState(false)
-
-  function addBlockedDate() {
-    if (!blockInput) return
-    if (bookingSettings.blockedDates.includes(blockInput)) return
-    onBookingSettingsChange({
-      ...bookingSettings,
-      blockedDates: [...bookingSettings.blockedDates, blockInput].sort()
-    })
-    setBlockInput('')
-  }
-
-  function removeBlockedDate(date: string) {
-    onBookingSettingsChange({
-      ...bookingSettings,
-      blockedDates: bookingSettings.blockedDates.filter(d => d !== date)
-    })
-  }
-
-  function toggleDay(day: number) {
-    const days = bookingSettings.allowedDays.includes(day)
-      ? bookingSettings.allowedDays.filter(d => d !== day)
-      : [...bookingSettings.allowedDays, day].sort()
-    onBookingSettingsChange({ ...bookingSettings, allowedDays: days })
-  }
 
   return (
     <div className="space-y-6">
@@ -340,7 +314,7 @@ export default function ContactStep({
               <p className="text-sm font-semibold text-slate-600 mb-2">📅 예약 신청 화면 미리보기</p>
               <div className="mb-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-2">
                 <span className="text-amber-500 text-sm">👁️</span>
-                <p className="text-xs text-amber-700">손님에게 보여지는 화면이에요. 아래 칸은 예시이며 직접 입력하는 곳이 아닙니다.</p>
+                <p className="text-xs text-amber-700">손님에게 보여지는 화면이에요.</p>
               </div>
               {bookingSettings.message && (
                 <div className="mb-3 px-4 py-3 bg-blue-50 border border-blue-100 rounded-2xl text-sm text-blue-800 whitespace-pre-wrap">
@@ -350,57 +324,21 @@ export default function ContactStep({
               <BookingFormPreview settings={bookingSettings} />
             </div>
 
-            {/* 고급 설정 토글 */}
-            <button
-              type="button"
-              onClick={() => setShowAdvanced(v => !v)}
-              className="w-full py-2.5 border border-slate-200 rounded-xl text-sm text-slate-500 bg-white flex items-center justify-center gap-1"
-            >
-              ⚙️ 상세 설정 {showAdvanced ? '▲' : '▼'}
-            </button>
-
-            {showAdvanced && (
-              <div className="space-y-5">
-                {/* 운영 시간 */}
-                <div>
-                  <p className="text-sm font-semibold text-slate-600 mb-2">🕐 예약 가능 시간</p>
-                  <div className="flex items-center gap-3">
-                    <input type="time" value={bookingSettings.startTime}
-                      onChange={e => onBookingSettingsChange({ ...bookingSettings, startTime: e.target.value })}
-                      className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
-                    <span className="text-slate-400 text-sm">~</span>
-                    <input type="time" value={bookingSettings.endTime}
-                      onChange={e => onBookingSettingsChange({ ...bookingSettings, endTime: e.target.value })}
-                      className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
-                  </div>
-                </div>
-
-                {/* 예약 불가 날짜 */}
-                <div>
-                  <p className="text-sm font-semibold text-slate-600 mb-2">🚫 예약 불가 날짜</p>
-                  <div className="flex gap-2">
-                    <input type="date" value={blockInput} min={new Date().toISOString().split('T')[0]}
-                      onChange={e => setBlockInput(e.target.value)}
-                      className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
-                    <button type="button" onClick={addBlockedDate}
-                      className="px-4 py-2.5 bg-slate-800 text-white rounded-xl text-sm font-semibold">추가</button>
-                  </div>
-                  {bookingSettings.blockedDates.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {bookingSettings.blockedDates.map(d => (
-                        <span key={d} className="flex items-center gap-1 px-2.5 py-1 bg-red-50 border border-red-200 rounded-lg text-xs text-red-600">
-                          {d}
-                          <button type="button" onClick={() => removeBlockedDate(d)} className="text-red-400 font-bold">✕</button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+            {/* 예약 가능 시간 */}
+            <div>
+              <p className="text-sm font-semibold text-slate-600 mb-2">🕐 예약 가능 시간</p>
+              <div className="flex items-center gap-3">
+                <input type="time" value={bookingSettings.startTime}
+                  onChange={e => onBookingSettingsChange({ ...bookingSettings, startTime: e.target.value })}
+                  className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
+                <span className="text-slate-400 text-sm">~</span>
+                <input type="time" value={bookingSettings.endTime}
+                  onChange={e => onBookingSettingsChange({ ...bookingSettings, endTime: e.target.value })}
+                  className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                />
               </div>
-            )}
+            </div>
           </div>
         )}
       </div>
