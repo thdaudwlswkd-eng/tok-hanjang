@@ -173,9 +173,16 @@ export default async function CardPage({ params }: Props) {
         </div>
       )}
 
-      <footer className="text-center py-6 text-xs text-slate-300 border-t border-slate-100">
-        톡한장으로 만든 명함
-      </footer>
+      {/* 나도 만들기 배너 */}
+      <div className="border-t border-slate-100 px-5 py-5 flex items-center justify-between bg-gradient-to-r from-blue-50 to-purple-50">
+        <div>
+          <p className="text-xs text-slate-500">이 명함은 <span className="font-bold text-blue-600">톡한장</span>으로 만들었어요 ✨</p>
+          <p className="text-xs text-slate-400 mt-0.5">나도 5분 만에 모바일 명함 만들기</p>
+        </div>
+        <a href="/start" className="bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl whitespace-nowrap shadow">
+          나도 만들기
+        </a>
+      </div>
     </div>
   )
 }
