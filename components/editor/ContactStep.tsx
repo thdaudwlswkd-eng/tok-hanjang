@@ -38,6 +38,10 @@ function BookingFormPreview({ settings, onBlockDate }: {
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedTime, setSelectedTime] = useState('')
   const [guests, setGuests] = useState(1)
+  const [previewName, setPreviewName] = useState('')
+  const [previewPhone, setPreviewPhone] = useState('')
+  const [previewMemo, setPreviewMemo] = useState('')
+  const [submitted, setSubmitted] = useState(false)
 
   const todayStr = toDateStr(today.getFullYear(), today.getMonth(), today.getDate())
   const firstDay = new Date(year, month, 1).getDay()
@@ -82,18 +86,42 @@ function BookingFormPreview({ settings, onBlockDate }: {
   for (let i = 0; i < firstDay; i++) cells.push(null)
   for (let d = 1; d <= daysInMonth; d++) cells.push(d)
 
+  if (submitted) return (
+    <div className="py-10 text-center space-y-3">
+      <p className="text-4xl">✅</p>
+      <p className="font-bold text-slate-800">예약 신청 완료!</p>
+      <p className="text-sm text-slate-500">실제 손님에게 이렇게 보여집니다</p>
+      <button type="button" onClick={() => { setSubmitted(false); setPreviewName(''); setPreviewPhone(''); setPreviewMemo(''); setSelectedDate(''); setSelectedTime('') }}
+        className="mt-2 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-sm font-semibold">
+        다시 테스트
+      </button>
+    </div>
+  )
+
   return (
     <div className="space-y-4">
       {/* 이름 */}
       <div>
         <label className="block text-sm font-semibold text-slate-600 mb-1.5">이름 <span className="text-red-400">*</span></label>
-        <div className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-400 text-sm">홍길동</div>
+        <input
+          type="text"
+          value={previewName}
+          onChange={e => setPreviewName(e.target.value)}
+          placeholder="홍길동"
+          className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+        />
       </div>
 
       {/* 연락처 */}
       <div>
         <label className="block text-sm font-semibold text-slate-600 mb-1.5">연락처 <span className="text-red-400">*</span></label>
-        <div className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-400 text-sm">010-1234-5678</div>
+        <input
+          type="tel"
+          value={previewPhone}
+          onChange={e => setPreviewPhone(e.target.value)}
+          placeholder="010-1234-5678"
+          className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+        />
       </div>
 
       {/* 인원 */}
@@ -181,10 +209,28 @@ function BookingFormPreview({ settings, onBlockDate }: {
       {/* 메모 */}
       <div>
         <label className="block text-sm font-semibold text-slate-600 mb-1.5">메모 <span className="text-slate-400 font-normal">(선택)</span></label>
-        <div className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-400 text-sm h-16">요청사항이 있으면 적어주세요</div>
+        <textarea
+          value={previewMemo}
+          onChange={e => setPreviewMemo(e.target.value)}
+          placeholder="요청사항이 있으면 적어주세요"
+          rows={3}
+          className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none"
+        />
       </div>
 
-      <div className="w-full py-4 bg-blue-200 text-white rounded-2xl font-bold text-base text-center">예약 신청하기</div>
+      <button
+        type="button"
+        onClick={() => {
+          if (!previewName || !previewPhone || !selectedDate || !selectedTime) {
+            alert('이름, 연락처, 날짜, 시간을 모두 선택해주세요')
+            return
+          }
+          setSubmitted(true)
+        }}
+        className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold text-base text-center active:bg-blue-600"
+      >
+        예약 신청하기
+      </button>
     </div>
   )
 }
@@ -291,7 +337,11 @@ export default function ContactStep({
 
             {/* 예약 폼 미리보기 */}
             <div>
-              <p className="text-sm font-semibold text-slate-600 mb-3">📅 예약 신청 화면 (미리보기)</p>
+              <p className="text-sm font-semibold text-slate-600 mb-2">📅 예약 신청 화면 미리보기</p>
+              <div className="mb-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-2">
+                <span className="text-amber-500 text-sm">👁️</span>
+                <p className="text-xs text-amber-700">손님에게 보여지는 화면이에요. 아래 칸은 예시이며 직접 입력하는 곳이 아닙니다.</p>
+              </div>
               {bookingSettings.message && (
                 <div className="mb-3 px-4 py-3 bg-blue-50 border border-blue-100 rounded-2xl text-sm text-blue-800 whitespace-pre-wrap">
                   {bookingSettings.message}
@@ -311,21 +361,6 @@ export default function ContactStep({
 
             {showAdvanced && (
               <div className="space-y-5">
-                {/* 가능한 요일 */}
-                <div>
-                  <p className="text-sm font-semibold text-slate-600 mb-2">📅 예약 가능한 요일</p>
-                  <div className="flex gap-1.5 flex-wrap">
-                    {DAY_LABELS.map((label, i) => (
-                      <button key={i} type="button" onClick={() => toggleDay(i)}
-                        className={`w-10 h-10 rounded-xl text-sm font-bold transition-colors ${
-                          bookingSettings.allowedDays.includes(i) ? 'bg-blue-500 text-white' : 'bg-white text-slate-400 border border-slate-200'
-                        }`}>
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 {/* 운영 시간 */}
                 <div>
                   <p className="text-sm font-semibold text-slate-600 mb-2">🕐 예약 가능 시간</p>
@@ -339,18 +374,6 @@ export default function ContactStep({
                       onChange={e => onBookingSettingsChange({ ...bookingSettings, endTime: e.target.value })}
                       className="flex-1 px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
                     />
-                  </div>
-                </div>
-
-                {/* 최대 인원 */}
-                <div>
-                  <p className="text-sm font-semibold text-slate-600 mb-2">👥 최대 예약 인원</p>
-                  <div className="flex items-center gap-4">
-                    <button type="button" onClick={() => onBookingSettingsChange({ ...bookingSettings, maxGuests: Math.max(1, bookingSettings.maxGuests - 1) })}
-                      className="w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-700 text-xl font-bold flex items-center justify-center">−</button>
-                    <span className="text-lg font-bold text-slate-800 min-w-[4rem] text-center">{bookingSettings.maxGuests}명</span>
-                    <button type="button" onClick={() => onBookingSettingsChange({ ...bookingSettings, maxGuests: Math.min(999, bookingSettings.maxGuests + 1) })}
-                      className="w-10 h-10 rounded-full bg-white border border-slate-200 text-slate-700 text-xl font-bold flex items-center justify-center">+</button>
                   </div>
                 </div>
 
