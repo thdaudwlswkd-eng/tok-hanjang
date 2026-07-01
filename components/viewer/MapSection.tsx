@@ -1,0 +1,51 @@
+'use client'
+
+interface Props {
+  address?: string | null
+}
+
+export default function MapSection({ address }: Props) {
+  if (!address) return null
+
+  const encoded = encodeURIComponent(address)
+  const kakaoUrl = `https://map.kakao.com/link/search/${encoded}`
+  const naverUrl = `https://map.naver.com/v5/search/${encoded}`
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${encoded}&output=embed&z=15`
+
+  return (
+    <section className="px-5 py-6 border-t border-slate-100">
+      <h2 className="text-base font-bold text-slate-800 mb-3">📍 찾아오시는 길</h2>
+
+      {/* Static map preview via Google */}
+      <div className="rounded-2xl overflow-hidden mb-3 bg-slate-100 h-40 relative">
+        <iframe
+          src={mapEmbedUrl}
+          className="w-full h-full border-0"
+          loading="lazy"
+          title="지도"
+        />
+      </div>
+
+      <p className="text-sm text-slate-600 mb-3">{address}</p>
+
+      <div className="flex gap-2">
+        <a
+          href={kakaoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 py-3 bg-yellow-400 text-slate-900 rounded-2xl font-bold text-center text-sm"
+        >
+          카카오맵
+        </a>
+        <a
+          href={naverUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 py-3 bg-naver text-white rounded-2xl font-bold text-center text-sm"
+        >
+          네이버지도
+        </a>
+      </div>
+    </section>
+  )
+}

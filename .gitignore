@@ -1,0 +1,24 @@
+# dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
+# environment
+.env
+.env.local
+.env*.local
+
+# uploads (local dev only)
+public/uploads/
+
+# OS
+.DS_Store
+Thumbs.db
+
+.vercel

@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Card {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Profile
+  name         String?
+  title        String?
+  bio          String?
+  career       String?
+  profilePhoto String?
+
+  // Photos (JSON array of paths)
+  photos       String?
+
+  // Contact
+  phone        String?
+  kakaoLink    String?
+
+  // Location
+  address      String?
+  lat          Float?
+  lng          Float?
+
+  // Business Hours (JSON)
+  hours        String?
+
+  // Generated slideshow video path
+  slideshowUrl String?
+
+  // User-uploaded video
+  videoUrl     String?
+
+  // OG image
+  ogImage      String?
+
+  // Theme
+  theme        String?
+  textColor    String?
+
+  // SNS Links (JSON)
+  snsLinks     String?
+
+  // Booking
+  bookingEnabled   Boolean   @default(false)
+  bookingSettings  String?   // JSON: { allowedDays, startTime, endTime, maxGuests, blockedDates }
+  bookings         Booking[]
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  name      String
+  phone     String
+  date      String
+  time      String
+  guests    Int?
+  note      String?
+  status    String   @default("pending")
+}
+
+// Already appended - no change needed

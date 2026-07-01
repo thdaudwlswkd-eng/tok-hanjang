@@ -1,0 +1,43 @@
+{
+  "name": "mobile-card",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "db:push": "prisma db push --env-file .env.local",
+    "db:studio": "prisma studio --env-file .env.local"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.16.0",
+    "@vercel/blob": "^2.5.0",
+    "clsx": "^2.1.1",
+    "formidable": "^3.5.1",
+    "next": "14.2.5",
+    "prisma": "^5.16.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "sharp": "^0.33.4",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/formidable": "^3.4.5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/uuid": "^10.0.0",
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5",
+    "vercel": "^54.18.6"
+  },
+  "allowScripts": {
+    "@prisma/client@5.22.0": true,
+    "@prisma/engines@5.22.0": true,
+    "prisma@5.22.0": true,
+    "sharp@0.33.5": true,
+    "esbuild@0.27.0": true
+  }
+}
