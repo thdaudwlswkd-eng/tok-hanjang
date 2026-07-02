@@ -198,8 +198,8 @@ export default function PhotoStep({
 
     try {
       const canvas = document.createElement('canvas')
-      canvas.width = 1080
-      canvas.height = 1080
+      canvas.width = 540
+      canvas.height = 540
       const ctx = canvas.getContext('2d')!
 
       const withAudio = !!audioFile
@@ -210,7 +210,7 @@ export default function PhotoStep({
         : (MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9'
           : 'video/webm')
 
-      const videoStream = canvas.captureStream(30)
+      const videoStream = canvas.captureStream(15)
       let recordStream: MediaStream = videoStream
 
       if (audioFile) {
@@ -261,7 +261,7 @@ export default function PhotoStep({
         }))
       )
 
-      const fps = 30
+      const fps = 15
       const framesPerPhoto = Math.round(PER_PHOTO_SEC * fps)
       const frameInterval = Math.round(1000 / fps)
 
@@ -278,13 +278,13 @@ export default function PhotoStep({
             const t = f / framesPerPhoto
             const fadeAlpha = t < 0.15 ? t / 0.15 : t > 0.85 ? (1 - t) / 0.15 : 1
             const scale = 1 + 0.04 * Math.sin(t * Math.PI)
-            ctx.clearRect(0, 0, 1080, 1080)
+            ctx.clearRect(0, 0, 540, 540)
             if (img.width && img.height) {
               ctx.save()
               ctx.globalAlpha = fadeAlpha
-              const s = Math.max(1080 / img.width, 1080 / img.height) * scale
-              const x = (1080 - img.width * s) / 2
-              const y = (1080 - img.height * s) / 2
+              const s = Math.max(540 / img.width, 540 / img.height) * scale
+              const x = (540 - img.width * s) / 2
+              const y = (540 - img.height * s) / 2
               ctx.drawImage(img, x, y, img.width * s, img.height * s)
               ctx.restore()
             }
@@ -311,8 +311,8 @@ export default function PhotoStep({
         const serverUrl = await uploadOneFile(file)
         onSlideshowVideoUrlChange(serverUrl)
         setSlideshowUrl(serverUrl)
-      } catch {
-        // 서버 업로드 실패해도 로컬에서는 재생 가능
+      } catch (e) {
+        setUploadError('슬라이드 저장 실패 (파일이 너무 클 수 있어요): ' + (e as Error).message)
       }
     } finally {
       setGenerating(false)
