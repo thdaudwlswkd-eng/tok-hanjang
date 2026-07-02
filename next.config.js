@@ -13,8 +13,4 @@ const nextConfig = {
     ],
   },
   experimental: {
-    serverComponentsExternalPackages: ['sharp', 'formidable'],
-  },
-}
-
-module.exports = nextConfig
+  

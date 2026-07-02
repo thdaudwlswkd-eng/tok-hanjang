@@ -42,6 +42,4 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     photos: card.photos ? JSON.parse(card.photos) : [],
     hours: card.hours ? JSON.parse(card.hours) : null,
     snsLinks: card.snsLinks ? JSON.parse(card.snsLinks) : null,
-    bookingSettings: c.bookingSettings ? JSON.parse(c.bookingSettings as string) : null,
-  })
-}
+    bookingSettings: c.bookingSettings ? JSON.parse(c.bookingSettings a

@@ -57,28 +57,4 @@ export default function ProfileStep({ name, title, bio, career, onChange, heroMo
           onChange={(e) => onChange('career', e.target.value)}
           placeholder="경력, 수상 이력, 자격증 등을 자유롭게 적어주세요"
           rows={5}
-          className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
-      </div>
-    </div>
-  )
-}
-
-function Field({
-  label, placeholder, value, onChange,
-}: {
-  label: string; placeholder: string; value: string; onChange: (v: string) => void
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-semibold text-slate-700 mb-2">{label}</label>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
-    </div>
-  )
-}
+          className="w-full px-4 py-3 rounded-2xl b

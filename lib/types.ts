@@ -112,6 +112,4 @@ export interface CardData {
   textColor?: string | null
   snsLinks?: SnsLinks | null
   bookingEnabled?: boolean | null
-  heroMode?: string | null
-  cardImage?: string | null
-}
+  

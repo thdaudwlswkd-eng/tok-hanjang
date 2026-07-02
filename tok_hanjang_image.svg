@@ -78,14 +78,4 @@
 
   <!-- 슬로건 -->
   <text x="340" y="546" text-anchor="middle" font-size="16" fill="#334155" font-family="Arial, sans-serif">핸드폰으로 뚝닥 만드는</text>
-  <text x="340" y="568" text-anchor="middle" font-size="16" fill="#2563eb" font-family="Arial, sans-serif" font-weight="bold">명함형 홈페이지</text>
-
-  <!-- 가격 태그 -->
-  <rect x="240" y="582" width="200" height="26" rx="13" fill="#dbeafe"/>
-  <text x="340" y="600" text-anchor="middle" font-size="12" fill="#1d4ed8" font-family="Arial, sans-serif" font-weight="bold">5만원 · 평생 이용 · 월정액 없음</text>
-
-  <!-- 하단 점 -->
-  <circle cx="318" cy="634" r="3.5" fill="#3b82f6" opacity="0.4"/>
-  <circle cx="340" cy="634" r="3.5" fill="#6366f1" opacity="0.6"/>
-  <circle cx="362" cy="634" r="3.5" fill="#3b82f6" opacity="0.4"/>
-</svg>
+  <text x="340" y="568" text-anchor="middle" font-size="16

@@ -268,15 +268,4 @@ export default function BookingModal({ cardId, bookingSettings, onClose }: Props
               {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
               <button type="button" onClick={submit} disabled={loading || !date || !time}
-                className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold text-base disabled:opacity-50">
-                {loading ? '신청 중...' : '예약 신청하기'}
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-      </div>
-    </div>,
-    document.body
-  )
-}
+                className="w-full py-4
