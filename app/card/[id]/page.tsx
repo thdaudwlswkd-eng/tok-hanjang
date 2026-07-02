@@ -105,16 +105,15 @@ export default async function CardPage({ params }: Props) {
 
       {/* 명함 헤더 — 화면 꽉 차게 */}
       {card.heroMode === 'card-image' && card.cardImage ? (
-        <section className="relative flex flex-col" style={{ minHeight: '100svh' }}>
+        <section className="relative flex items-center justify-center bg-black" style={{ minHeight: '100svh' }}>
           <img
             src={card.cardImage}
             alt="명함"
-            className="w-full flex-1 object-cover"
-            style={{ minHeight: 0 }}
+            className="w-full object-contain"
+            style={{ maxHeight: '100svh' }}
           />
           {/* 스크롤 힌트 */}
-          <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center pb-6"
-            style={{ background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.45))' }}>
+          <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center pb-6">
             <p className="text-white/80 text-xs mb-1">아래로 스크롤</p>
             <span className="text-white/60 text-lg animate-bounce">↓</span>
           </div>
@@ -197,4 +196,4 @@ export default async function CardPage({ params }: Props) {
         <div className="text-center py-20 text-slate-400">
           <p className="text-4xl mb-4">📭</p>
           <p>아직 내용이 없습니다</p>
-          <a href
+          <a href={`/create?id=${card.id}`} className="text-blue-500 font-semibold 
