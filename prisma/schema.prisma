@@ -71,4 +71,6 @@ model Booking {
   date      String
   time      String
   guests    Int?
-  no
+  note      String?
+  status    String   @default("pending")
+}
