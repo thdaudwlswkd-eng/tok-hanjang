@@ -171,6 +171,11 @@ function CreatePageInner() {
     await saveField({ slideshowUrl: url })
   }
 
+  async function handleVideoChange(url: string) {
+    setVideoUrl(url)
+    await saveField({ videoUrl: url })
+  }
+
   async function finish() {
     await save()
     setShowShare(true)
@@ -268,7 +273,7 @@ function CreatePageInner() {
             onPhotosChange={handlePhotosChange}
             onProfilePhotoChange={handleProfilePhotoChange}
             videoUrl={videoUrl}
-            onVideoChange={setVideoUrl}
+            onVideoChange={handleVideoChange}
             heroMode={heroMode}
             cardImage={cardImage}
             onHeroModeChange={setHeroMode}
