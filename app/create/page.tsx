@@ -50,6 +50,8 @@ function CreatePageInner() {
   const [videoUrl, setVideoUrl] = useState('')
   const [address, setAddress] = useState('')
   const [hours, setHours] = useState<BusinessHours | null>(null)
+  const [heroMode, setHeroMode] = useState('profile')
+  const [cardImage, setCardImage] = useState('')
   const [loaded, setLoaded] = useState(false)
 
   // 기존 저장 데이터 불러오기
@@ -75,6 +77,8 @@ function CreatePageInner() {
         if (data.videoUrl) setVideoUrl(data.videoUrl)
         if (data.address) setAddress(data.address)
         if (data.hours) setHours(typeof data.hours === 'string' ? JSON.parse(data.hours) : data.hours)
+        if (data.heroMode) setHeroMode(data.heroMode)
+        if (data.cardImage) setCardImage(data.cardImage)
         setLoaded(true)
       })
       .catch(() => setLoaded(true))
@@ -96,8 +100,10 @@ function CreatePageInner() {
     bookingSettings: JSON.stringify(bookingSettings),
     videoUrl,
     address,
+    heroMode,
+    cardImage,
     hours,
-  }), [photos, profilePhoto, name, title, bio, career, theme, textColor, phone, kakaoLink, snsLinks, bookingEnabled, bookingSettings, videoUrl, address, hours])
+  }), [photos, profilePhoto, name, title, bio, career, theme, textColor, phone, kakaoLink, snsLinks, bookingEnabled, bookingSettings, videoUrl, address, heroMode, cardImage, hours])
 
   async function save() {
     setSaving(true)
@@ -219,6 +225,10 @@ function CreatePageInner() {
             onProfilePhotoChange={setProfilePhoto}
             videoUrl={videoUrl}
             onVideoChange={setVideoUrl}
+            heroMode={heroMode}
+            cardImage={cardImage}
+            onHeroModeChange={setHeroMode}
+            onCardImageChange={setCardImage}
           />
         )}
         {step === 1 && (

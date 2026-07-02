@@ -19,7 +19,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const body = await req.json()
 
   const updateData: Record<string, unknown> = {}
-  const fields = ['name', 'title', 'bio', 'career', 'profilePhoto', 'phone', 'kakaoLink', 'address', 'lat', 'lng', 'slideshowUrl', 'videoUrl', 'ogImage', 'theme', 'textColor'] as const
+  const fields = ['name', 'title', 'bio', 'career', 'profilePhoto', 'phone', 'kakaoLink', 'address', 'lat', 'lng', 'slideshowUrl', 'videoUrl', 'ogImage', 'theme', 'textColor', 'heroMode', 'cardImage'] as const
 
   for (const f of fields) {
     if (f in body) updateData[f] = body[f]

@@ -48,6 +48,10 @@ model Card {
   theme        String?
   textColor    String?
 
+  // Hero mode: 'profile' (default) or 'card-image'
+  heroMode     String?
+  cardImage    String?
+
   // SNS Links (JSON)
   snsLinks     String?
 

@@ -12,6 +12,10 @@ interface Props {
   onProfilePhotoChange: (url: string) => void
   videoUrl: string
   onVideoChange: (url: string) => void
+  heroMode: string
+  cardImage: string
+  onHeroModeChange: (mode: string) => void
+  onCardImageChange: (url: string) => void
 }
 
 async function compressImage(file: File, maxWidth = 1400, quality = 0.82): Promise<File> {
@@ -72,8 +76,11 @@ async function uploadOneFile(file: File): Promise<string> {
 
 export default function PhotoStep({
   photos, profilePhoto, onPhotosChange, onProfilePhotoChange, videoUrl, onVideoChange,
+  heroMode, cardImage, onHeroModeChange, onCardImageChange,
 }: Props) {
   const [activeTab, setActiveTab] = useState<'gallery' | 'video'>('gallery')
+  const [cardImageUploading, setCardImageUploading] = useState(false)
+  const cardImageInput = useRef<HTMLInputElement>(null)
 
   const [profileUploading, setProfileUploading] = useState(false)
   const [galleryUploading, setGalleryUploading] = useState(false)
@@ -125,6 +132,21 @@ export default function PhotoStep({
       setUploadError('갤러리 업로드 실패: ' + (e as Error).message)
     } finally {
       setGalleryUploading(false)
+    }
+  }
+
+  async function uploadCardImage(files: FileList) {
+    if (!files.length) return
+    setCardImageUploading(true)
+    setUploadError('')
+    try {
+      const compressed = await compressImage(files[0])
+      const url = await uploadOneFile(compressed)
+      onCardImageChange(url)
+    } catch (e) {
+      setUploadError('명함 사진 업로드 실패: ' + (e as Error).message)
+    } finally {
+      setCardImageUploading(false)
     }
   }
 
@@ -267,6 +289,98 @@ export default function PhotoStep({
         </div>
       )}
 
+      {/* 첫 화면 방식 선택 */}
+      <div>
+        <p className="text-sm font-bold text-slate-700 mb-3">📋 명함 첫 화면 방식 선택</p>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => onHeroModeChange('profile')}
+            className={`p-4 rounded-2xl border-2 text-left transition-colors ${
+              heroMode !== 'card-image'
+                ? 'border-blue-500 bg-blue-50'
+                : 'border-slate-200 bg-white'
+            }`}
+          >
+            <p className="text-xl mb-1">👤</p>
+            <p className="text-sm font-bold text-slate-700">프로필 작성</p>
+            <p className="text-xs text-slate-400 mt-0.5">이름·사진·소개 직접 입력</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => onHeroModeChange('card-image')}
+            className={`p-4 rounded-2xl border-2 text-left transition-colors ${
+              heroMode === 'card-image'
+                ? 'border-blue-500 bg-blue-50'
+                : 'border-slate-200 bg-white'
+            }`}
+          >
+            <p className="text-xl mb-1">🪪</p>
+            <p className="text-sm font-bold text-slate-700">명함 사진</p>
+            <p className="text-xs text-slate-400 mt-0.5">내 명함을 사진으로 올리기</p>
+          </button>
+        </div>
+      </div>
+
+      {/* 명함 사진 모드 */}
+      {heroMode === 'card-image' && (
+        <div className="bg-white border border-slate-200 rounded-2xl p-4">
+          <p className="text-sm font-bold text-slate-700 mb-1">🪪 명함 사진</p>
+          <p className="text-xs text-slate-400 mb-3">올린 사진이 첫 화면 전체에 크게 표시됩니다</p>
+          {cardImage ? (
+            <div className="space-y-3">
+              <img src={cardImage} alt="명함 사진" className="w-full rounded-2xl object-contain border border-slate-100 max-h-56" />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => cardImageInput.current?.click()}
+                  disabled={cardImageUploading}
+                  className="flex-1 py-2.5 border border-blue-300 text-blue-500 rounded-xl text-sm font-semibold"
+                >
+                  사진 변경
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onCardImageChange('')}
+                  className="flex-1 py-2.5 border border-red-200 text-red-400 rounded-xl text-sm font-semibold"
+                >
+                  삭제
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => cardImageInput.current?.click()}
+              disabled={cardImageUploading}
+              className="w-full aspect-[2/1] rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center bg-slate-50 text-slate-400 gap-2 disabled:opacity-60"
+            >
+              {cardImageUploading ? (
+                <>
+                  <span className="text-3xl">⏳</span>
+                  <span className="text-sm">업로드 중...</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-4xl">🪪</span>
+                  <span className="text-sm font-semibold text-slate-600">명함 사진 올리기</span>
+                  <span className="text-xs">JPG · PNG · HEIC 가능</span>
+                </>
+              )}
+            </button>
+          )}
+          <input
+            ref={cardImageInput}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => e.target.files && uploadCardImage(e.target.files)}
+          />
+        </div>
+      )}
+
+      {/* 프로필 사진 (프로필 모드일 때만) */}
+      {heroMode !== 'card-image' && (
       <div className="bg-white border border-slate-200 rounded-2xl p-4">
         <p className="text-sm font-bold text-slate-700 mb-3">👤 프로필 사진</p>
         <div className="flex items-center gap-4">
@@ -313,6 +427,7 @@ export default function PhotoStep({
           />
         </div>
       </div>
+      )} {/* end heroMode !== 'card-image' */}
 
       <div>
         <div className="flex gap-1 bg-slate-100 rounded-2xl p-1 mb-4">

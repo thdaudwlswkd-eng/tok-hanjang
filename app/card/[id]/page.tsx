@@ -104,6 +104,26 @@ export default async function CardPage({ params }: Props) {
       <EditBanner id={card.id} pendingBookings={pendingBookings} />
 
       {/* 명함 헤더 */}
+      {card.heroMode === 'card-image' && card.cardImage ? (
+        <section className="relative">
+          <img
+            src={card.cardImage}
+            alt="명함"
+            className="w-full object-contain"
+            style={{ maxHeight: '80vw' }}
+          />
+          {/* 명함형 홈페이지 뱃지 */}
+          <div className="absolute top-3 left-0 right-0 flex justify-center">
+            <span className="text-xs px-3 py-1 rounded-full bg-black/30 text-white/70 tracking-widest backdrop-blur-sm">
+              명함형 홈페이지
+            </span>
+          </div>
+          {/* 스크롤 힌트 */}
+          <div className="text-center py-3 bg-white">
+            <p className="text-xs text-slate-400">화면을 아래로 내리면 더 많은 정보를 볼 수 있어요 ↓</p>
+          </div>
+        </section>
+      ) : (
       <section
         className="text-white px-6 pt-10 pb-8 relative"
         style={{ background: headerBg }}
@@ -144,6 +164,7 @@ export default async function CardPage({ params }: Props) {
           <p className="text-xs" style={{ color: rgba(tc, 0.45) }}>화면을 아래로 내리면 더 많은 정보를 볼 수 있어요 ↓</p>
         </div>
       </section>
+      )}
 
       {/* 연락처 + 예약 버튼 */}
       <ContactButtons
