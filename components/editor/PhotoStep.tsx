@@ -627,14 +627,22 @@ export default function PhotoStep({
 
                 {slideshowUrl && !generating && (
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs font-semibold text-slate-500">미리보기{audioFile ? ' 🎵' : ''}</p>
-                      {slideshowSaving && <p className="text-xs text-violet-500">☁️ 저장 중...</p>}
-                      {slideshowSaved && !slideshowSaving && <p className="text-xs text-green-500">✅ 저장 완료</p>}
-                    </div>
-                    {slideshowSaveError && (
-                      <p className="text-xs text-red-400 bg-red-50 rounded-xl p-2">⚠️ {slideshowSaveError}</p>
+                    {slideshowSaving && (
+                      <div className="w-full py-3 bg-violet-50 border border-violet-200 rounded-2xl text-center text-sm text-violet-600 font-semibold">
+                        ☁️ 서버에 저장 중... 잠시 기다려주세요
+                      </div>
                     )}
+                    {slideshowSaved && !slideshowSaving && (
+                      <div className="w-full py-3 bg-green-50 border border-green-200 rounded-2xl text-center text-sm text-green-600 font-semibold">
+                        ✅ 저장 완료! 이제 나갔다 와도 유지돼요
+                      </div>
+                    )}
+                    {slideshowSaveError && (
+                      <div className="w-full py-3 bg-red-50 border border-red-200 rounded-2xl text-center text-sm text-red-500">
+                        ⚠️ {slideshowSaveError}
+                      </div>
+                    )}
+                    <p className="text-xs font-semibold text-slate-500">미리보기{audioFile ? ' 🎵' : ''}</p>
                     <video src={slideshowUrl} controls playsInline className="w-full rounded-2xl bg-black" style={{ maxHeight: '60vw' }} />
                     <button type="button" onClick={generateSlideshow} className="w-full py-2.5 border border-slate-200 text-slate-500 rounded-2xl text-sm">
                       다시 만들기
