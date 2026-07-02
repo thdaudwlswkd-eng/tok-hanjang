@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import PhotoStep from '@/components/editor/PhotoStep'
@@ -126,6 +126,16 @@ function CreatePageInner() {
       setSaving(false)
     }
   }
+
+  // 이미지 변경 시 자동 저장 (stale closure 방지용 ref 패턴)
+  const saveRef = useRef(save)
+  useEffect(() => { saveRef.current = save })
+
+  useEffect(() => {
+    if (!loaded) return
+    const timer = setTimeout(() => { saveRef.current() }, 800)
+    return () => clearTimeout(timer)
+  }, [photos, profilePhoto, cardImage, loaded])
 
   async function finish() {
     await save()
