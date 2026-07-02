@@ -237,6 +237,7 @@ function CreatePageInner() {
             title={title}
             bio={bio}
             career={career}
+            heroMode={heroMode}
             onChange={(field, value) => {
               if (field === 'name') setName(value)
               else if (field === 'title') setTitle(value)
