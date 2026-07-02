@@ -109,7 +109,7 @@ export default async function CardPage({ params }: Props) {
           <img
             src={card.cardImage}
             alt="명함"
-            style={{ maxWidth: '100%', maxHeight: '100svh', width: 'auto', height: 'auto', display: 'block' }}
+            style={{ maxWidth: '100vw', maxHeight: '100svh', width: 'auto', height: 'auto', display: 'block' }}
           />
           {/* 스크롤 힌트 */}
           <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center pb-6">
@@ -195,4 +195,4 @@ export default async function CardPage({ params }: Props) {
         <div className="text-center py-20 text-slate-400">
           <p className="text-4xl mb-4">📭</p>
           <p>아직 내용이 없습니다</p>
-          <a href={`/create?id=${card.id}`} className="text-bl
+          <a href={`/create?id=${card.id}`} className="text-b
