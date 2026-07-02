@@ -11,7 +11,7 @@ import MapSection from '@/components/viewer/MapSection'
 import HoursSection from '@/components/viewer/HoursSection'
 import ShareSection from '@/components/viewer/ShareSection'
 import VideoSection from '@/components/viewer/VideoSection'
-import EditBanner from './EditBanner'
+// EditBanner removed - not shown to card recipients
 
 interface Props {
   params: { id: string }
@@ -101,7 +101,7 @@ export default async function CardPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-white max-w-lg mx-auto">
-      <EditBanner id={card.id} pendingBookings={pendingBookings} />
+      {/* EditBanner removed */}
 
       {/* 명함 헤더 — 화면 꽉 차게 */}
       {card.heroMode === 'card-image' && card.cardImage ? (
@@ -195,4 +195,4 @@ export default async function CardPage({ params }: Props) {
         <div className="text-center py-20 text-slate-400">
           <p className="text-4xl mb-4">📭</p>
           <p>아직 내용이 없습니다</p>
-          <a href={`/create?id=${card.id}`} className="text-b
+          <a href={`/create?id=${card.id}`} className="text-blue-500 font-semibol
