@@ -140,6 +140,37 @@ function CreatePageInner() {
     return () => clearTimeout(timer)
   }, [photos, profilePhoto, cardImage, slideshowUrl, loaded])
 
+  // 미디어(사진/슬라이드)는 업로드 즉시 바로 API 저장 — auto-save 타이밍 문제 방지
+  async function saveField(fields: Record<string, unknown>) {
+    try {
+      await fetch(`/api/cards/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fields),
+      })
+    } catch { /* ignore */ }
+  }
+
+  async function handlePhotosChange(newPhotos: string[]) {
+    setPhotos(newPhotos)
+    await saveField({ photos: newPhotos })
+  }
+
+  async function handleProfilePhotoChange(url: string) {
+    setProfilePhoto(url)
+    await saveField({ profilePhoto: url })
+  }
+
+  async function handleCardImageChange(url: string) {
+    setCardImage(url)
+    await saveField({ cardImage: url })
+  }
+
+  async function handleSlideshowUrlChange(url: string) {
+    setSlideshowUrl(url)
+    await saveField({ slideshowUrl: url })
+  }
+
   async function finish() {
     await save()
     setShowShare(true)
@@ -234,16 +265,16 @@ function CreatePageInner() {
           <PhotoStep
             photos={photos}
             profilePhoto={profilePhoto}
-            onPhotosChange={setPhotos}
-            onProfilePhotoChange={setProfilePhoto}
+            onPhotosChange={handlePhotosChange}
+            onProfilePhotoChange={handleProfilePhotoChange}
             videoUrl={videoUrl}
             onVideoChange={setVideoUrl}
             heroMode={heroMode}
             cardImage={cardImage}
             onHeroModeChange={setHeroMode}
-            onCardImageChange={setCardImage}
+            onCardImageChange={handleCardImageChange}
             slideshowVideoUrl={slideshowUrl}
-            onSlideshowVideoUrlChange={setSlideshowUrl}
+            onSlideshowVideoUrlChange={handleSlideshowUrlChange}
           />
         )}
         {step === 1 && (
