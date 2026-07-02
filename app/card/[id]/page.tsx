@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!card) return { title: '페이지를 찾을 수 없습니다' }
 
   const title = card.name ? `${card.name}의 명함` : '명함 홈페이지'
-  const description = card.bio ?? card.title ?? '한 페이지 명함 홈페이지'
+  const description = card.title ? `${card.title}` : '모바일 명함 홈페이지'
   const image = card.profilePhoto ?? (card.photos?.[0]) ?? undefined
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
