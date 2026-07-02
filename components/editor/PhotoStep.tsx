@@ -493,13 +493,33 @@ export default function PhotoStep({
           <button
             type="button"
             onClick={() => setActiveTab('video')}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors relative ${
               activeTab === 'video' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'
             }`}
           >
             🎥 동영상
+            {videoUrl && (
+              <span className="absolute top-1 right-2 w-2 h-2 bg-green-400 rounded-full" />
+            )}
           </button>
         </div>
+
+        {/* 동영상 업로드된 경우 갤러리 탭에서도 미리보기 표시 */}
+        {activeTab === 'gallery' && videoUrl && (
+          <div className="mb-4 p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-semibold text-slate-600">🎥 업로드된 동영상</p>
+              <button
+                type="button"
+                onClick={() => setActiveTab('video')}
+                className="text-xs text-blue-500 font-semibold"
+              >
+                관리하기 →
+              </button>
+            </div>
+            <video src={videoUrl} controls playsInline className="w-full rounded-xl bg-black" style={{ maxHeight: '40vw' }} />
+          </div>
+        )}
 
         {activeTab === 'gallery' && (
           <div>
