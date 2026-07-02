@@ -4,6 +4,11 @@ interface Props {
   snsLinks?: SnsLinks | null
 }
 
+function ensureHttps(url: string) {
+  if (!url) return '#'
+  return url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`
+}
+
 export default function SnsSection({ snsLinks }: Props) {
   if (!snsLinks) return null
 
@@ -17,7 +22,7 @@ export default function SnsSection({ snsLinks }: Props) {
         {active.map((p) => (
           <a
             key={p.id}
-            href={snsLinks[p.id]!}
+            href={ensureHttps(snsLinks[p.id]!)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white active:opacity-80 transition-opacity"

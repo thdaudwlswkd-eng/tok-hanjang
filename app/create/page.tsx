@@ -52,6 +52,7 @@ function CreatePageInner() {
   const [hours, setHours] = useState<BusinessHours | null>(null)
   const [heroMode, setHeroMode] = useState('profile')
   const [cardImage, setCardImage] = useState('')
+  const [slideshowUrl, setSlideshowUrl] = useState('')
   const [loaded, setLoaded] = useState(false)
 
   // 기존 저장 데이터 불러오기
@@ -79,6 +80,7 @@ function CreatePageInner() {
         if (data.hours) setHours(typeof data.hours === 'string' ? JSON.parse(data.hours) : data.hours)
         if (data.heroMode) setHeroMode(data.heroMode)
         if (data.cardImage) setCardImage(data.cardImage)
+        if (data.slideshowUrl) setSlideshowUrl(data.slideshowUrl)
         setLoaded(true)
       })
       .catch(() => setLoaded(true))
@@ -102,8 +104,9 @@ function CreatePageInner() {
     address,
     heroMode,
     cardImage,
+    slideshowUrl,
     hours,
-  }), [photos, profilePhoto, name, title, bio, career, theme, textColor, phone, kakaoLink, snsLinks, bookingEnabled, bookingSettings, videoUrl, address, heroMode, cardImage, hours])
+  }), [photos, profilePhoto, name, title, bio, career, theme, textColor, phone, kakaoLink, snsLinks, bookingEnabled, bookingSettings, videoUrl, address, heroMode, cardImage, slideshowUrl, hours])
 
   async function save() {
     setSaving(true)
@@ -135,7 +138,7 @@ function CreatePageInner() {
     if (!loaded) return
     const timer = setTimeout(() => { saveRef.current() }, 800)
     return () => clearTimeout(timer)
-  }, [photos, profilePhoto, cardImage, loaded])
+  }, [photos, profilePhoto, cardImage, slideshowUrl, loaded])
 
   async function finish() {
     await save()
@@ -239,6 +242,8 @@ function CreatePageInner() {
             cardImage={cardImage}
             onHeroModeChange={setHeroMode}
             onCardImageChange={setCardImage}
+            slideshowVideoUrl={slideshowUrl}
+            onSlideshowVideoUrlChange={setSlideshowUrl}
           />
         )}
         {step === 1 && (

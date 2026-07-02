@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const MAX_PHOTOS = 30
 const PER_PHOTO_SEC = 2.5
@@ -16,6 +16,8 @@ interface Props {
   cardImage: string
   onHeroModeChange: (mode: string) => void
   onCardImageChange: (url: string) => void
+  slideshowVideoUrl: string
+  onSlideshowVideoUrlChange: (url: string) => void
 }
 
 async function compressImage(file: File, maxWidth = 1400, quality = 0.82): Promise<File> {
@@ -77,6 +79,7 @@ async function uploadOneFile(file: File): Promise<string> {
 export default function PhotoStep({
   photos, profilePhoto, onPhotosChange, onProfilePhotoChange, videoUrl, onVideoChange,
   heroMode, cardImage, onHeroModeChange, onCardImageChange,
+  slideshowVideoUrl, onSlideshowVideoUrlChange,
 }: Props) {
   const [activeTab, setActiveTab] = useState<'gallery' | 'video'>('gallery')
   const [cardImageUploading, setCardImageUploading] = useState(false)
@@ -91,6 +94,21 @@ export default function PhotoStep({
   const [genStep, setGenStep] = useState(0)
   const [slideshowUrl, setSlideshowUrl] = useState<string | null>(null)
   const [audioFile, setAudioFile] = useState<File | null>(null)
+  const [audioBlobUrl, setAudioBlobUrl] = useState<string | null>(null)
+  const [audioError, setAudioError] = useState('')
+
+  // 서버에 저장된 슬라이드쇼 URL이 있으면 로드
+  useEffect(() => {
+    if (slideshowVideoUrl && !slideshowUrl) setSlideshowUrl(slideshowVideoUrl)
+  }, [slideshowVideoUrl])
+
+  // 음악 파일 blob URL 관리 (메모리 누수 방지)
+  useEffect(() => {
+    if (!audioFile) { setAudioBlobUrl(null); return }
+    const url = URL.createObjectURL(audioFile)
+    setAudioBlobUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [audioFile])
 
   const photoInput = useRef<HTMLInputElement>(null)
   const profileInput = useRef<HTMLInputElement>(null)
@@ -206,14 +224,26 @@ export default function PhotoStep({
           audioSource.buffer = audioBuffer
           audioSource.loop = true
           audioSource.connect(dest)
-          recordStream = new MediaStream([
-            ...videoStream.getTracks(),
-            ...dest.stream.getTracks(),
-          ])
-        } catch {
+
+          const audioTracks = dest.stream.getAudioTracks()
+          if (audioTracks.length > 0) {
+            recordStream = new MediaStream([
+              ...videoStream.getTracks(),
+              ...audioTracks,
+            ])
+            setAudioError('')
+          } else {
+            // iOS Safari: AudioContext → MediaStream 오디오 트랙 미지원
+            audioCtx = null
+            audioSource = null
+            recordStream = videoStream
+            setAudioError('이 기기에서는 음악 합치기가 지원되지 않아요. 영상만 만들어집니다.')
+          }
+        } catch (e) {
           audioCtx = null
           audioSource = null
           recordStream = videoStream
+          setAudioError('음악 합치기 실패 — 영상만 만들어집니다. (' + (e as Error).message + ')')
         }
       }
 
@@ -272,7 +302,18 @@ export default function PhotoStep({
       if (audioCtx) await audioCtx.close()
 
       const blob = new Blob(chunks, { type: 'video/webm' })
-      setSlideshowUrl(URL.createObjectURL(blob))
+      const localUrl = URL.createObjectURL(blob)
+      setSlideshowUrl(localUrl)
+
+      // 서버에 업로드해서 저장 (나갔다 와도 유지)
+      try {
+        const file = new File([blob], 'slideshow.webm', { type: 'video/webm' })
+        const serverUrl = await uploadOneFile(file)
+        onSlideshowVideoUrlChange(serverUrl)
+        setSlideshowUrl(serverUrl)
+      } catch {
+        // 서버 업로드 실패해도 로컬에서는 재생 가능
+      }
     } finally {
       setGenerating(false)
     }
@@ -518,12 +559,17 @@ export default function PhotoStep({
                         <span className="text-lg">🎵</span>
                         <span className="text-xs text-slate-700 truncate flex-1">{audioFile.name}</span>
                       </div>
-                      <audio
-                        src={URL.createObjectURL(audioFile)}
-                        controls
-                        className="w-full h-9"
-                        style={{ borderRadius: '12px' }}
-                      />
+                      {audioBlobUrl && (
+                        <audio
+                          src={audioBlobUrl}
+                          controls
+                          className="w-full h-9"
+                          style={{ borderRadius: '12px' }}
+                        />
+                      )}
+                      {audioError && (
+                        <p className="text-xs text-red-400">⚠️ {audioError}</p>
+                      )}
                     </div>
                   ) : (
                     <button
