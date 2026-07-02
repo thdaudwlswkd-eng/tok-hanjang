@@ -49,7 +49,7 @@ export default function StartPage() {
           <div className="text-center">
             <p className="text-slate-400 text-sm">평생 이용</p>
             <p className="text-4xl font-bold mt-1">
-              99,000<span className="text-lg font-normal text-slate-300">원</span>
+              50,000<span className="text-lg font-normal text-slate-300">원</span>
             </p>
             <p className="text-slate-400 text-xs mt-1">월정액 없음 · 한 번 결제로 평생 사용</p>
           </div>
