@@ -513,9 +513,17 @@ export default function PhotoStep({
                     )}
                   </div>
                   {audioFile ? (
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">🎵</span>
-                      <span className="text-xs text-slate-700 truncate flex-1">{audioFile.name}</span>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🎵</span>
+                        <span className="text-xs text-slate-700 truncate flex-1">{audioFile.name}</span>
+                      </div>
+                      <audio
+                        src={URL.createObjectURL(audioFile)}
+                        controls
+                        className="w-full h-9"
+                        style={{ borderRadius: '12px' }}
+                      />
                     </div>
                   ) : (
                     <button
@@ -566,9 +574,6 @@ export default function PhotoStep({
                   <div className="space-y-3">
                     <p className="text-xs font-semibold text-slate-500">미리보기{audioFile ? ' 🎵 음악 포함' : ''}</p>
                     <video src={slideshowUrl} controls playsInline className="w-full rounded-2xl bg-black" style={{ maxHeight: '60vw' }} />
-                    <a href={slideshowUrl} download="slideshow.webm" className="block w-full py-3.5 bg-violet-500 text-white rounded-2xl font-bold text-sm text-center active:opacity-80">
-                      💾 영상 저장하기
-                    </a>
                     <button type="button" onClick={generateSlideshow} className="w-full py-2.5 border border-slate-200 text-slate-500 rounded-2xl text-sm">
                       다시 만들기
                     </button>
