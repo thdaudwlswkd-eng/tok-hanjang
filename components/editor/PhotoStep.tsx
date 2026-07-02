@@ -93,6 +93,9 @@ export default function PhotoStep({
   const [generating, setGenerating] = useState(false)
   const [genStep, setGenStep] = useState(0)
   const [slideshowUrl, setSlideshowUrl] = useState<string | null>(null)
+  const [slideshowSaving, setSlideshowSaving] = useState(false)
+  const [slideshowSaveError, setSlideshowSaveError] = useState('')
+  const [slideshowSaved, setSlideshowSaved] = useState(false)
   const [audioFile, setAudioFile] = useState<File | null>(null)
   const [audioBlobUrl, setAudioBlobUrl] = useState<string | null>(null)
   const [audioError, setAudioError] = useState('')
@@ -306,13 +309,19 @@ export default function PhotoStep({
       setSlideshowUrl(localUrl)
 
       // 서버에 업로드해서 저장 (나갔다 와도 유지)
+      setSlideshowSaving(true)
+      setSlideshowSaveError('')
+      setSlideshowSaved(false)
       try {
         const file = new File([blob], 'slideshow.webm', { type: 'video/webm' })
         const serverUrl = await uploadOneFile(file)
-        onSlideshowVideoUrlChange(serverUrl)
+        await onSlideshowVideoUrlChange(serverUrl)
         setSlideshowUrl(serverUrl)
+        setSlideshowSaved(true)
       } catch (e) {
-        setUploadError('슬라이드 저장 실패 (파일이 너무 클 수 있어요): ' + (e as Error).message)
+        setSlideshowSaveError('저장 실패: ' + (e as Error).message)
+      } finally {
+        setSlideshowSaving(false)
       }
     } finally {
       setGenerating(false)
@@ -618,7 +627,14 @@ export default function PhotoStep({
 
                 {slideshowUrl && !generating && (
                   <div className="space-y-3">
-                    <p className="text-xs font-semibold text-slate-500">미리보기{audioFile ? ' 🎵 음악 포함' : ''}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-semibold text-slate-500">미리보기{audioFile ? ' 🎵' : ''}</p>
+                      {slideshowSaving && <p className="text-xs text-violet-500">☁️ 저장 중...</p>}
+                      {slideshowSaved && !slideshowSaving && <p className="text-xs text-green-500">✅ 저장 완료</p>}
+                    </div>
+                    {slideshowSaveError && (
+                      <p className="text-xs text-red-400 bg-red-50 rounded-xl p-2">⚠️ {slideshowSaveError}</p>
+                    )}
                     <video src={slideshowUrl} controls playsInline className="w-full rounded-2xl bg-black" style={{ maxHeight: '60vw' }} />
                     <button type="button" onClick={generateSlideshow} className="w-full py-2.5 border border-slate-200 text-slate-500 rounded-2xl text-sm">
                       다시 만들기
