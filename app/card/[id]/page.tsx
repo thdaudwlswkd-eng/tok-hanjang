@@ -103,65 +103,62 @@ export default async function CardPage({ params }: Props) {
     <div className="min-h-screen bg-white max-w-lg mx-auto">
       <EditBanner id={card.id} pendingBookings={pendingBookings} />
 
-      {/* 명함 헤더 */}
+      {/* 명함 헤더 — 화면 꽉 차게 */}
       {card.heroMode === 'card-image' && card.cardImage ? (
-        <section className="relative">
+        <section className="relative flex flex-col" style={{ minHeight: '100svh' }}>
           <img
             src={card.cardImage}
             alt="명함"
-            className="w-full object-contain"
-            style={{ maxHeight: '80vw' }}
+            className="w-full flex-1 object-cover"
+            style={{ minHeight: 0 }}
           />
-          {/* 명함형 홈페이지 뱃지 */}
-          <div className="absolute top-3 left-0 right-0 flex justify-center">
-            <span className="text-xs px-3 py-1 rounded-full bg-black/30 text-white/70 tracking-widest backdrop-blur-sm">
-              명함형 홈페이지
-            </span>
-          </div>
           {/* 스크롤 힌트 */}
-          <div className="text-center py-3 bg-white">
-            <p className="text-xs text-slate-400">화면을 아래로 내리면 더 많은 정보를 볼 수 있어요 ↓</p>
+          <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center pb-6"
+            style={{ background: 'linear-gradient(to bottom, transparent, rgba(0,0,0,0.45))' }}>
+            <p className="text-white/80 text-xs mb-1">아래로 스크롤</p>
+            <span className="text-white/60 text-lg animate-bounce">↓</span>
           </div>
         </section>
       ) : (
       <section
-        className="text-white px-6 pt-10 pb-8 relative"
-        style={{ background: headerBg }}
+        className="text-white px-6 relative flex flex-col items-center justify-center"
+        style={{ background: headerBg, minHeight: '100svh' }}
       >
         {/* 명함형 홈페이지 뱃지 */}
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center mb-6">
           <span className="text-xs px-3 py-1 rounded-full border border-white/30 text-white/60 tracking-widest">
             명함형 홈페이지
           </span>
         </div>
 
         {card.profilePhoto && (
-          <div className="flex justify-center mb-5">
+          <div className="flex justify-center mb-6">
             <img
               src={card.profilePhoto}
               alt="프로필"
-              className="w-48 h-48 rounded-full object-cover border-[3px] border-white/40 shadow-2xl"
+              className="w-40 h-40 rounded-full object-cover border-[3px] border-white/40 shadow-2xl"
             />
           </div>
         )}
         <div className="text-center">
           {card.name && (
-            <h1 className="text-2xl font-bold leading-tight" style={{ color: tc }}>{card.name}</h1>
+            <h1 className="text-3xl font-bold leading-tight" style={{ color: tc }}>{card.name}</h1>
           )}
           {card.title && (
-            <p className="text-sm mt-1" style={{ color: rgba(tc, 0.7) }}>{card.title}</p>
+            <p className="text-base mt-2" style={{ color: rgba(tc, 0.7) }}>{card.title}</p>
           )}
           {card.phone && (
             <p className="text-base mt-1.5" style={{ color: rgba(tc, 0.55) }}>{card.phone}</p>
           )}
         </div>
         {card.bio && (
-          <p className="text-sm leading-relaxed mt-4 text-center" style={{ color: rgba(tc, 0.8) }}>{card.bio}</p>
+          <p className="text-sm leading-relaxed mt-5 text-center max-w-xs" style={{ color: rgba(tc, 0.8) }}>{card.bio}</p>
         )}
 
         {/* 스크롤 힌트 */}
-        <div className="text-center mt-6">
-          <p className="text-xs" style={{ color: rgba(tc, 0.45) }}>화면을 아래로 내리면 더 많은 정보를 볼 수 있어요 ↓</p>
+        <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center">
+          <p className="text-xs mb-1" style={{ color: rgba(tc, 0.45) }}>아래로 스크롤</p>
+          <span className="text-lg animate-bounce" style={{ color: rgba(tc, 0.4) }}>↓</span>
         </div>
       </section>
       )}
