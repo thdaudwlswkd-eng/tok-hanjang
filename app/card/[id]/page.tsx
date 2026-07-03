@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { cache } from 'react'
 
 export const dynamic = 'force-dynamic'
 import { prisma } from '@/lib/db'
@@ -21,7 +22,7 @@ interface RawCard extends CardData {
   bookingSettings?: string | null
 }
 
-async function getCard(id: string): Promise<RawCard | null> {
+const getCard = cache(async (id: string): Promise<RawCard | null> => {
   try {
     const card = await prisma.card.findUnique({ where: { id } })
     if (!card) return null
@@ -36,7 +37,7 @@ async function getCard(id: string): Promise<RawCard | null> {
   } catch {
     return null
   }
-}
+})
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const card = await getCard(params.id)
