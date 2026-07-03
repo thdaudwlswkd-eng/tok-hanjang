@@ -195,4 +195,22 @@ export default async function CardPage({ params }: Props) {
         <div className="text-center py-20 text-slate-400">
           <p className="text-4xl mb-4">📭</p>
           <p>아직 내용이 없습니다</p>
-          <a href={`/create?id=${card.id}`} className="text-blue-500 font-semibol
+          <a href={`/create?id=${card.id}`} className="text-blue-500 font-semibold mt-2 inline-block">
+            편집하러 가기
+          </a>
+        </div>
+      )}
+
+      {/* 나도 만들기 배너 */}
+      <div className="border-t border-slate-100 px-5 py-5 flex items-center justify-between bg-gradient-to-r from-blue-50 to-purple-50">
+        <div>
+          <p className="text-xs text-slate-500">이 명함은 <span className="font-bold text-blue-600">톡한장</span>으로 만들었어요 ✨</p>
+          <p className="text-xs text-slate-400 mt-0.5">나도 5분 만에 모바일 명함 만들기</p>
+        </div>
+        <a href="/start" className="bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl whitespace-nowrap shadow">
+          나도 만들기
+        </a>
+      </div>
+    </div>
+  )
+}
