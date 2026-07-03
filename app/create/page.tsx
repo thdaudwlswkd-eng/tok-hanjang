@@ -200,7 +200,7 @@ function CreatePageInner() {
   }
 
   function preview() {
-    save().then(() => window.open(`/card/${id}`, '_blank'))
+    save().then(() => window.open(`/card/${id}?edit=1`, '_blank'))
   }
 
   const isLast = step === STEPS.length - 1
@@ -410,7 +410,7 @@ function CreatePageInner() {
                 📤 공유하기
               </button>
               <a
-                href={`/card/${id}`}
+                href={`/card/${id}?edit=1`}
                 className="block w-full py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold text-base text-center"
               >
                 완성된 명함 보러가기 →
