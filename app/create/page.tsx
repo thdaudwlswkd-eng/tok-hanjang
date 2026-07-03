@@ -1,29 +1,24 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
-import PhotoStep from '@/components/editor/PhotoStep'
-import ProfileStep from '@/components/editor/ProfileStep'
-import ThemeStep from '@/components/editor/ThemeStep'
-import ContactStep, { BookingSettings, DEFAULT_BOOKING_SETTINGS } from '@/components/editor/ContactStep'
-import SnsStep from '@/components/editor/SnsStep'
-import MapStep from '@/components/editor/MapStep'
-import HoursStep from '@/components/editor/HoursStep'
+import BasicInfoStep from '@/components/editor/BasicInfoStep'
+import MediaStep from '@/components/editor/MediaStep'
+import SnsKakaoStep from '@/components/editor/SnsKakaoStep'
+import BookingHoursStep, { BookingSettings, DEFAULT_BOOKING_SETTINGS } from '@/components/editor/BookingHoursStep'
+import ContactLocationStep from '@/components/editor/ContactLocationStep'
 import { BusinessHours, SnsLinks, DEFAULT_THEME_COLOR, DEFAULT_TEXT_COLOR } from '@/lib/types'
 
 const STEPS = [
-  { id: 'photos',  label: '사진',    icon: '📸' },
-  { id: 'profile', label: '소개',    icon: '👤' },
-  { id: 'theme',   label: '색상',    icon: '🎨' },
-  { id: 'contact', label: '연락처',  icon: '📞' },
-  { id: 'sns',     label: 'SNS',     icon: '🔗' },
-  { id: 'map',     label: '위치',    icon: '🗺️' },
-  { id: 'hours',   label: '영업시간', icon: '🕐' },
+  { id: 'basic',    label: '기본정보', icon: '🪪' },
+  { id: 'media',    label: '소개·미디어', icon: '📸' },
+  { id: 'sns',      label: 'SNS',     icon: '🔗' },
+  { id: 'booking',  label: '예약·시간', icon: '📅' },
+  { id: 'contact',  label: '연락처·위치', icon: '📍' },
 ]
 
 function CreatePageInner() {
-  const router = useRouter()
   const params = useSearchParams()
   const id = params.get('id')!
 
@@ -58,7 +53,6 @@ function CreatePageInner() {
   // 기존 저장 데이터 불러오기
   useEffect(() => {
     if (!id) return
-    // 이 기기에서 만든 카드로 기억
     const owned: string[] = JSON.parse(localStorage.getItem('myCards') || '[]')
     if (!owned.includes(id)) { owned.push(id); localStorage.setItem('myCards', JSON.stringify(owned)) }
     fetch(`/api/cards/${id}`)
@@ -90,50 +84,29 @@ function CreatePageInner() {
   }, [id])
 
   const getPayload = useCallback(() => ({
-    photos,
-    profilePhoto,
-    name,
-    title,
-    bio,
-    career,
-    theme,
-    textColor,
-    phone,
-    kakaoLink,
-    snsLinks,
+    photos, profilePhoto, name, title, bio, career,
+    theme, textColor, phone, kakaoLink, snsLinks,
     bookingEnabled,
     bookingSettings: JSON.stringify(bookingSettings),
-    videoUrl,
-    address,
-    heroMode,
-    cardImage,
-    slideshowUrl,
-    hours,
+    videoUrl, address, heroMode, cardImage, slideshowUrl, hours,
   }), [photos, profilePhoto, name, title, bio, career, theme, textColor, phone, kakaoLink, snsLinks, bookingEnabled, bookingSettings, videoUrl, address, heroMode, cardImage, slideshowUrl, hours])
 
   async function save() {
-    setSaving(true)
-    setSaveError('')
+    setSaving(true); setSaveError('')
     try {
       const res = await fetch(`/api/cards/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(getPayload()),
       })
-      if (!res.ok) {
-        setSaveError('저장 실패. 인터넷 연결을 확인하고 다시 시도해주세요.')
-        return false
-      }
+      if (!res.ok) { setSaveError('저장 실패. 인터넷 연결을 확인해주세요.'); return false }
       return true
     } catch {
       setSaveError('저장 중 오류가 발생했습니다.')
       return false
-    } finally {
-      setSaving(false)
-    }
+    } finally { setSaving(false) }
   }
 
-  // 이미지 변경 시 자동 저장 (stale closure 방지용 ref 패턴)
   const saveRef = useRef(save)
   useEffect(() => { saveRef.current = save })
 
@@ -143,7 +116,6 @@ function CreatePageInner() {
     return () => clearTimeout(timer)
   }, [photos, profilePhoto, cardImage, slideshowUrl, loaded])
 
-  // 미디어(사진/슬라이드)는 업로드 즉시 바로 API 저장 — auto-save 타이밍 문제 방지
   async function saveField(fields: Record<string, unknown>) {
     try {
       await fetch(`/api/cards/${id}`, {
@@ -231,29 +203,24 @@ function CreatePageInner() {
             </h1>
           </div>
         </div>
-        <button
-          onClick={preview}
-          className="text-blue-500 text-sm font-semibold px-3 py-1.5 rounded-xl bg-blue-50"
-        >
+        <button onClick={preview} className="text-blue-500 text-sm font-semibold px-3 py-1.5 rounded-xl bg-blue-50">
           미리보기
         </button>
       </header>
 
       {/* Progress bar */}
       <div className="h-1 bg-slate-200">
-        <div
-          className="h-full bg-blue-500 transition-all duration-300"
-          style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
-        />
+        <div className="h-full bg-blue-500 transition-all duration-300"
+          style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
       </div>
 
       {/* Step dots */}
-      <div className="flex justify-center gap-1.5 py-3 bg-white border-b border-slate-100">
+      <div className="flex justify-center gap-1 py-3 bg-white border-b border-slate-100 overflow-x-auto">
         {STEPS.map((s, i) => (
           <button
             key={s.id}
             onClick={() => setStep(i)}
-            className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-colors ${
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs transition-colors whitespace-nowrap ${
               i === step
                 ? 'bg-blue-500 text-white font-semibold'
                 : i < step
@@ -262,7 +229,7 @@ function CreatePageInner() {
             }`}
           >
             <span>{s.icon}</span>
-            <span className="hidden sm:inline">{s.label}</span>
+            <span className="text-xs">{s.label}</span>
           </button>
         ))}
       </div>
@@ -270,91 +237,85 @@ function CreatePageInner() {
       {/* Content */}
       <div className="flex-1 px-5 py-6 overflow-y-auto">
         {step === 0 && (
-          <PhotoStep
-            photos={photos}
-            profilePhoto={profilePhoto}
-            onPhotosChange={handlePhotosChange}
-            onProfilePhotoChange={handleProfilePhotoChange}
-            videoUrl={videoUrl}
-            onVideoChange={handleVideoChange}
+          <BasicInfoStep
             heroMode={heroMode}
-            cardImage={cardImage}
             onHeroModeChange={setHeroMode}
+            cardImage={cardImage}
             onCardImageChange={handleCardImageChange}
-            slideshowVideoUrl={slideshowUrl}
-            onSlideshowVideoUrlChange={handleSlideshowUrlChange}
+            profilePhoto={profilePhoto}
+            onProfilePhotoChange={handleProfilePhotoChange}
+            name={name}
+            title={title}
+            phone={phone}
+            onNameChange={setName}
+            onTitleChange={setTitle}
+            onPhoneChange={setPhone}
+            theme={theme}
+            onThemeChange={setTheme}
+            textColor={textColor}
+            onTextColorChange={setTextColor}
           />
         )}
         {step === 1 && (
-          <ProfileStep
-            name={name}
-            title={title}
+          <MediaStep
             bio={bio}
             career={career}
+            onBioChange={setBio}
+            onCareerChange={setCareer}
+            photos={photos}
+            onPhotosChange={handlePhotosChange}
+            videoUrl={videoUrl}
+            onVideoChange={handleVideoChange}
+            slideshowVideoUrl={slideshowUrl}
+            onSlideshowVideoUrlChange={handleSlideshowUrlChange}
             heroMode={heroMode}
-            onChange={(field, value) => {
-              if (field === 'name') setName(value)
-              else if (field === 'title') setTitle(value)
-              else if (field === 'bio') setBio(value)
-              else if (field === 'career') setCareer(value)
-            }}
           />
         )}
         {step === 2 && (
-          <ThemeStep theme={theme} onChange={setTheme} textColor={textColor} onTextColorChange={setTextColor} />
+          <SnsKakaoStep
+            snsLinks={snsLinks}
+            kakaoLink={kakaoLink}
+            onChange={setSnsLinks}
+            onKakaoLinkChange={setKakaoLink}
+          />
         )}
         {step === 3 && (
-          <ContactStep
-            phone={phone}
-            kakaoLink={kakaoLink}
+          <BookingHoursStep
             bookingEnabled={bookingEnabled}
             bookingSettings={bookingSettings}
-            onChange={(field, value) => {
-              if (field === 'phone') setPhone(value)
-              else if (field === 'kakaoLink') setKakaoLink(value)
-            }}
             onBookingChange={setBookingEnabled}
             onBookingSettingsChange={setBookingSettings}
+            hours={hours}
+            onHoursChange={setHours}
             cardId={id}
           />
         )}
         {step === 4 && (
-          <SnsStep snsLinks={snsLinks} onChange={setSnsLinks} />
-        )}
-        {step === 5 && (
-          <MapStep
+          <ContactLocationStep
+            phone={phone}
+            kakaoLink={kakaoLink}
+            bookingEnabled={bookingEnabled}
             address={address}
-            onChange={(_, value) => setAddress(value)}
+            onAddressChange={setAddress}
           />
-        )}
-        {step === 6 && (
-          <HoursStep hours={hours} onChange={setHours} />
         )}
       </div>
 
       {/* Footer nav */}
       <div className="bg-white border-t border-slate-100 px-5 py-4 safe-area-bottom">
         {isLast ? (
-          <button
-            onClick={finish}
-            disabled={saving}
-            className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold text-lg disabled:opacity-60"
-          >
+          <button onClick={finish} disabled={saving}
+            className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold text-lg disabled:opacity-60">
             {saving ? '저장 중...' : '완성! 공유 링크 받기 →'}
           </button>
         ) : (
           <div className="flex gap-3">
-            <button
-              onClick={async () => { await save(); setShowShare(true) }}
-              disabled={saving}
-              className="flex-1 py-4 bg-slate-100 text-slate-700 rounded-2xl font-semibold disabled:opacity-60"
-            >
+            <button onClick={async () => { await save(); setShowShare(true) }} disabled={saving}
+              className="flex-1 py-4 bg-slate-100 text-slate-700 rounded-2xl font-semibold disabled:opacity-60">
               저장
             </button>
-            <button
-              onClick={async () => { await save(); setStep(step + 1) }}
-              className="flex-[2] py-4 bg-blue-500 text-white rounded-2xl font-bold"
-            >
+            <button onClick={async () => { await save(); setStep(step + 1) }}
+              className="flex-[2] py-4 bg-blue-500 text-white rounded-2xl font-bold">
               다음 →
             </button>
           </div>
@@ -373,56 +334,35 @@ function CreatePageInner() {
         <div className="fixed inset-0 flex items-end justify-center" style={{ zIndex: 200 }}>
           <div className="absolute inset-0 bg-black/60" onClick={() => setShowShare(false)} />
           <div className="relative w-full max-w-lg bg-white rounded-t-3xl px-5 pt-8 pb-12" style={{ zIndex: 1 }}>
-            {/* 닫기 */}
-            <button
-              type="button"
-              onClick={() => setShowShare(false)}
-              className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 text-sm"
-            >
+            <button type="button" onClick={() => setShowShare(false)}
+              className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 text-sm">
               ✕
             </button>
-
-            {/* 완성 메시지 */}
             <div className="text-center mb-6">
               <p className="text-4xl mb-3">🎉</p>
               <p className="text-xl font-bold text-slate-800">명함이 완성되었습니다!</p>
               <p className="text-sm text-slate-500 mt-1">링크를 복사하거나 공유하세요</p>
             </div>
-
-            {/* 링크 복사 */}
             <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 mb-5">
               <span className="text-sm text-slate-500 truncate flex-1 font-mono">
                 {typeof window !== 'undefined' ? cardUrl() : ''}
               </span>
-              <button
-                type="button"
-                onClick={copyLink}
-                className="text-sm font-bold text-blue-500 whitespace-nowrap px-2"
-              >
+              <button type="button" onClick={copyLink}
+                className="text-sm font-bold text-blue-500 whitespace-nowrap px-2">
                 {copied ? '✓ 복사됨' : '복사'}
               </button>
             </div>
-
-            {/* 버튼 */}
             <div className="space-y-2.5">
-              <button
-                type="button"
-                onClick={shareLink}
-                className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold text-base"
-              >
+              <button type="button" onClick={shareLink}
+                className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold text-base">
                 📤 공유하기
               </button>
-              <a
-                href={`/card/${id}?edit=1`}
-                className="block w-full py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold text-base text-center"
-              >
+              <a href={`/card/${id}?edit=1`}
+                className="block w-full py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold text-base text-center">
                 완성된 명함 보러가기 →
               </a>
-              <button
-                type="button"
-                onClick={() => setShowShare(false)}
-                className="w-full py-3 text-slate-400 text-sm"
-              >
+              <button type="button" onClick={() => setShowShare(false)}
+                className="w-full py-3 text-slate-400 text-sm">
                 계속 편집하기
               </button>
             </div>
@@ -440,3 +380,4 @@ export default function CreatePage() {
     </Suspense>
   )
 }
+                                        

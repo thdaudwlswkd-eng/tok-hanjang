@@ -47,14 +47,13 @@ export default function Slideshow({ photos }: Props) {
           </div>
         ))}
 
-        {/* Dots */}
         {photos.length > 1 && (
           <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
             {photos.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
-                className={`w-1.5 h-1.5 rounded-full transition-all ${i === current ? 'bg-white w-4' : 'bg-white/50'}`}
+                className={i === current ? 'w-4 h-1.5 rounded-full bg-white' : 'w-1.5 h-1.5 rounded-full bg-white/50'}
               />
             ))}
           </div>

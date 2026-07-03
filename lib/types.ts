@@ -52,18 +52,13 @@ export const SNS_PLATFORMS: {
   { id: 'blog',      label: '블로그',     emoji: '📝', color: '#03C75A', placeholder: 'https://blog.naver.com/아이디' },
 ]
 
-// Color palette: 6 rows (dark→medium) × 10 columns (color families)
-// Columns: slate, red, orange, amber, green, teal, blue, indigo, purple, rose
 export const COLOR_PALETTE: string[][] = [
-  // 파스텔 (연한)
   ['#f8fafc', '#fef2f2', '#fff7ed', '#fffbeb', '#f0fdf4', '#ecfeff', '#eff6ff', '#eef2ff', '#faf5ff', '#fdf4ff'],
   ['#f1f5f9', '#fee2e2', '#ffedd5', '#fef9c3', '#dcfce7', '#cffafe', '#dbeafe', '#e0e7ff', '#ede9fe', '#fce7f3'],
   ['#e2e8f0', '#fecaca', '#fed7aa', '#fde68a', '#bbf7d0', '#a5f3fc', '#bfdbfe', '#c7d2fe', '#ddd6fe', '#fbcfe8'],
-  // 중간
   ['#94a3b8', '#ef4444', '#f97316', '#f59e0b', '#22c55e', '#14b8a6', '#3b82f6', '#6366f1', '#9333ea', '#f43f5e'],
   ['#64748b', '#dc2626', '#ea580c', '#d97706', '#16a34a', '#0d9488', '#2563eb', '#4f46e5', '#7e22ce', '#e11d48'],
   ['#475569', '#b91c1c', '#c2410c', '#b45309', '#15803d', '#0f766e', '#1d4ed8', '#4338ca', '#6b21a8', '#be123c'],
-  // 진한
   ['#334155', '#991b1b', '#9a3412', '#92400e', '#166534', '#115e59', '#1e40af', '#3730a3', '#581c87', '#9f1239'],
   ['#1e293b', '#7f1d1d', '#7c2d12', '#78350f', '#14532d', '#134e4a', '#1e3a8a', '#312e81', '#4a044e', '#881337'],
   ['#0f172a', '#450a0a', '#431407', '#451a03', '#052e16', '#042f2e', '#172554', '#1e1b4b', '#2e1065', '#4c0519'],
@@ -71,8 +66,6 @@ export const COLOR_PALETTE: string[][] = [
 
 export const DEFAULT_THEME_COLOR = '#0f172a'
 
-// Text color palette: 6 rows (light→dark) × 10 columns
-// Columns: neutral, red, orange, amber, green, cyan, blue, indigo, purple, pink
 export const TEXT_COLOR_PALETTE: string[][] = [
   ['#ffffff', '#fef2f2', '#fff7ed', '#fffbeb', '#f0fdf4', '#ecfeff', '#eff6ff', '#eef2ff', '#faf5ff', '#fdf2f8'],
   ['#e2e8f0', '#fecaca', '#fed7aa', '#fde68a', '#bbf7d0', '#a5f3fc', '#bfdbfe', '#c7d2fe', '#e9d5ff', '#fbcfe8'],
