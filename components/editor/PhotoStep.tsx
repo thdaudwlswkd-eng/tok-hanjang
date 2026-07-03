@@ -535,4 +535,198 @@ export default function PhotoStep({
               {photos.map((url, i) => (
                 <div key={url} className="relative aspect-square rounded-xl overflow-hidden bg-slate-100">
                   <img src={url} alt={`사진 ${i + 1}`} className="w-full h-full object-cover" />
-                  <but
+                  <button
+                    type="button"
+                    onClick={() => removePhoto(i)}
+                    className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center text-white text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+
+              {photos.length < MAX_PHOTOS && (
+                <button
+                  type="button"
+                  onClick={() => photoInput.current?.click()}
+                  disabled={galleryUploading}
+                  className="aspect-square rounded-xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center bg-slate-50 text-slate-400 text-xs gap-1 disabled:opacity-60"
+                >
+                  {galleryUploading ? (
+                    <span className="animate-spin text-xl">⏳</span>
+                  ) : (
+                    <>
+                      <span className="text-2xl">+</span>
+                      <span>사진 추가</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+
+            <input
+              ref={photoInput}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => e.target.files && uploadGallery(e.target.files)}
+            />
+
+            {photos.length >= 2 && (
+              <div className="mt-5 space-y-3">
+                <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-semibold text-slate-600">🎵 배경음악 (선택)</p>
+                    {audioFile && (
+                      <button type="button" onClick={() => setAudioFile(null)} className="text-xs text-red-400 font-semibold">삭제</button>
+                    )}
+                  </div>
+                  {audioFile ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🎵</span>
+                        <span className="text-xs text-slate-700 truncate flex-1">{audioFile.name}</span>
+                      </div>
+                      {audioBlobUrl && (
+                        <audio
+                          src={audioBlobUrl}
+                          controls
+                          className="w-full h-9"
+                          style={{ borderRadius: '12px' }}
+                        />
+                      )}
+                      {audioError && (
+                        <p className="text-xs text-red-400">⚠️ {audioError}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => audioInput.current?.click()}
+                      className="w-full py-2.5 border border-dashed border-slate-300 rounded-xl text-xs text-slate-400 flex items-center justify-center gap-1.5 bg-white"
+                    >
+                      <span>➕</span>
+                      <span>음악 파일 추가 (MP3 · AAC · WAV · FLAC)</span>
+                    </button>
+                  )}
+                  <input
+                    ref={audioInput}
+                    type="file"
+                    accept="audio/*,.mp3,.aac,.wav,.ogg,.flac,.m4a"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && setAudioFile(e.target.files[0])}
+                  />
+                </div>
+
+                {!generating && !slideshowUrl && (
+                  <button
+                    type="button"
+                    onClick={generateSlideshow}
+                    className="w-full py-3.5 bg-violet-500 text-white rounded-2xl font-bold text-sm active:opacity-80"
+                  >
+                    🎬 슬라이드로 만들기{audioFile ? ' (음악 포함)' : ''}
+                  </button>
+                )}
+
+                {generating && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs text-slate-500">
+                      <span>슬라이드 영상 만드는 중{audioFile ? ' 🎵' : ''}...</span>
+                      <span>{genStep} / {photos.length}장</span>
+                    </div>
+                    <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-violet-500 transition-all duration-500 rounded-full"
+                        style={{ width: `${genProgress}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-slate-400 text-center">약 {remainingSec}초 남았습니다</p>
+                  </div>
+                )}
+
+                {slideshowUrl && !generating && (
+                  <div className="space-y-3">
+                    {slideshowSaving && (
+                      <div className="w-full py-3 bg-violet-50 border border-violet-200 rounded-2xl text-center text-sm text-violet-600 font-semibold">
+                        ☁️ 서버에 저장 중... 잠시 기다려주세요
+                      </div>
+                    )}
+                    {slideshowSaved && !slideshowSaving && (
+                      <div className="w-full py-3 bg-green-50 border border-green-200 rounded-2xl text-center text-sm text-green-600 font-semibold">
+                        ✅ 저장 완료! 이제 나갔다 와도 유지돼요
+                      </div>
+                    )}
+                    {slideshowSaveError && (
+                      <div className="w-full py-3 bg-red-50 border border-red-200 rounded-2xl text-center text-sm text-red-500">
+                        ⚠️ {slideshowSaveError}
+                      </div>
+                    )}
+                    <p className="text-xs font-semibold text-slate-500">미리보기{audioFile ? ' 🎵' : ''}</p>
+                    <video src={slideshowUrl} controls playsInline className="w-full rounded-2xl bg-black" style={{ maxHeight: '60vw' }} />
+                    <button type="button" onClick={generateSlideshow} className="w-full py-2.5 border border-slate-200 text-slate-500 rounded-2xl text-sm">
+                      다시 만들기
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {photos.length === 0 && (
+              <p className="text-xs text-center text-slate-400 py-2">사진을 추가하면 슬라이드쇼가 자동 생성됩니다</p>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'video' && (
+          <div>
+            <p className="text-sm font-semibold text-slate-700 mb-1">동영상 업로드 (선택)</p>
+            <p className="text-xs text-slate-400 mb-4">업로드한 영상이 완성된 명함 페이지에서 재생됩니다</p>
+
+            {videoUrl ? (
+              <div>
+                <video src={videoUrl} controls playsInline className="w-full rounded-2xl bg-black" style={{ maxHeight: '60vh' }} />
+                <button
+                  type="button"
+                  onClick={() => onVideoChange('')}
+                  className="mt-3 w-full py-3 border border-red-200 text-red-500 rounded-2xl text-sm font-semibold"
+                >
+                  영상 삭제
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => videoInput.current?.click()}
+                disabled={videoUploading}
+                className="w-full aspect-video rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center bg-slate-50 text-slate-400 gap-2 active:bg-slate-100 disabled:opacity-60"
+              >
+                {videoUploading ? (
+                  <>
+                    <span className="text-3xl">⏳</span>
+                    <span className="text-sm font-semibold">업로드 중...</span>
+                    <span className="text-xs">파일 크기에 따라 시간이 걸릴 수 있습니다</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-4xl">🎥</span>
+                    <span className="text-sm font-semibold text-slate-600">동영상을 탭해서 업로드</span>
+                    <span className="text-xs">MP4 · MOV · WebM · AVI 지원</span>
+                  </>
+                )}
+              </button>
+            )}
+
+            <input
+              ref={videoInput}
+              type="file"
+              accept="video/mp4,video/quicktime,video/webm,video/x-msvideo,.mp4,.mov,.webm,.avi,.m4v,.mkv"
+              className="hidden"
+              onChange={(e) => e.target.files?.[0] && uploadVideo(e.target.files[0])}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

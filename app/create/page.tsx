@@ -374,4 +374,66 @@ function CreatePageInner() {
             <button
               type="button"
               onClick={() => setShowShare(false)}
-              className="absolute top-5 righ
+              className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 text-sm"
+            >
+              ✕
+            </button>
+
+            {/* 완성 메시지 */}
+            <div className="text-center mb-6">
+              <p className="text-4xl mb-3">🎉</p>
+              <p className="text-xl font-bold text-slate-800">명함이 완성되었습니다!</p>
+              <p className="text-sm text-slate-500 mt-1">링크를 복사하거나 공유하세요</p>
+            </div>
+
+            {/* 링크 복사 */}
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 mb-5">
+              <span className="text-sm text-slate-500 truncate flex-1 font-mono">
+                {typeof window !== 'undefined' ? cardUrl() : ''}
+              </span>
+              <button
+                type="button"
+                onClick={copyLink}
+                className="text-sm font-bold text-blue-500 whitespace-nowrap px-2"
+              >
+                {copied ? '✓ 복사됨' : '복사'}
+              </button>
+            </div>
+
+            {/* 버튼 */}
+            <div className="space-y-2.5">
+              <button
+                type="button"
+                onClick={shareLink}
+                className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold text-base"
+              >
+                📤 공유하기
+              </button>
+              <a
+                href={`/card/${id}`}
+                className="block w-full py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold text-base text-center"
+              >
+                완성된 명함 보러가기 →
+              </a>
+              <button
+                type="button"
+                onClick={() => setShowShare(false)}
+                className="w-full py-3 text-slate-400 text-sm"
+              >
+                계속 편집하기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function CreatePage() {
+  return (
+    <Suspense>
+      <CreatePageInner />
+    </Suspense>
+  )
+}

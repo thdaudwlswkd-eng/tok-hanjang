@@ -26,4 +26,13 @@ export default function SnsSection({ snsLinks }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white active:opacity-80 transition-opacity"
-            style={{ backgr
+            style={{ backgroundColor: p.color }}
+          >
+            <span>{p.emoji}</span>
+            <span>{p.label}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  )
+}
