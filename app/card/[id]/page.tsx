@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
 
-  const imageUrl = image ? (image.startsWith('http') ? image : `${baseUrl}${image}`) : undefined
+  const imageUrl = `${baseUrl}/api/og-image/${params.id}`
   const cardUrl = `${baseUrl}/card/${params.id}`
 
   return {
@@ -61,14 +61,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       url: cardUrl,
-      images: imageUrl ? [{ url: imageUrl, width: 800, height: 800, alt: card.name ?? '명함 이미지' }] : [],
+      images: [{ url: imageUrl, width: 800, height: 800, alt: card.name ?? '명함 이미지' }],
       type: 'profile',
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: imageUrl ? [imageUrl] : [],
+      images: [imageUrl],
     },
   }
 }
