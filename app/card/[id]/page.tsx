@@ -43,8 +43,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const card = await getCard(params.id)
   if (!card) return { title: '페이지를 찾을 수 없습니다' }
 
-  const title = card.name ? `${card.name} 명함` : '명함'
-  const description = card.title ?? card.bio ?? ''
+  const title = '핸드폰으로 뚝딱 만드는 명함형 홈페이지'
+  const description = ''
   const image = (card.heroMode === 'card-image' && card.cardImage)
     ? card.cardImage
     : (card.profilePhoto ?? card.photos?.[0] ?? undefined)
