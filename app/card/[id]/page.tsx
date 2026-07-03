@@ -44,12 +44,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!card) return { title: '페이지를 찾을 수 없습니다' }
 
   const title = '핸드폰으로 뚝딱 만드는 명함형 홈페이지'
-  const description = ''
+  const description = [card.name, card.title].filter(Boolean).join(' · ')
   const image = (card.heroMode === 'card-image' && card.cardImage)
     ? card.cardImage
     : (card.profilePhoto ?? card.photos?.[0] ?? undefined)
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+
+  const imageUrl = image ? (image.startsWith('http') ? image : `${baseUrl}${image}`) : undefined
+  const cardUrl = `${baseUrl}/card/${params.id}`
 
   return {
     title,
@@ -57,14 +60,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: image ? [{ url: image.startsWith('http') ? image : `${baseUrl}${image}` }] : [],
+      url: cardUrl,
+      images: imageUrl ? [{ url: imageUrl, width: 800, height: 800, alt: card.name ?? '명함 이미지' }] : [],
       type: 'profile',
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: image ? [image.startsWith('http') ? image : `${baseUrl}${image}`] : [],
+      images: imageUrl ? [imageUrl] : [],
     },
   }
 }
