@@ -11,11 +11,10 @@ import MapSection from '@/components/viewer/MapSection'
 import HoursSection from '@/components/viewer/HoursSection'
 import ShareSection from '@/components/viewer/ShareSection'
 import VideoSection from '@/components/viewer/VideoSection'
-import EditBanner from './EditBanner'
+import OwnerBanner from '@/components/viewer/OwnerBanner'
 
 interface Props {
   params: { id: string }
-  searchParams: { edit?: string }
 }
 
 interface RawCard extends CardData {
@@ -69,10 +68,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function CardPage({ params, searchParams }: Props) {
+export default async function CardPage({ params }: Props) {
   const card = await getCard(params.id)
   if (!card) notFound()
-  const isOwner = searchParams.edit === '1'
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
@@ -105,7 +103,7 @@ export default async function CardPage({ params, searchParams }: Props) {
 
   return (
     <div className="min-h-screen bg-white max-w-lg mx-auto">
-      {isOwner && <EditBanner id={card.id} pendingBookings={pendingBookings} />}
+      <OwnerBanner cardId={card.id} pendingBookings={pendingBookings} />
 
       {/* 명함 헤더 — 화면 꽉 차게 */}
       {card.heroMode === 'card-image' && card.cardImage ? (

@@ -58,6 +58,9 @@ function CreatePageInner() {
   // 기존 저장 데이터 불러오기
   useEffect(() => {
     if (!id) return
+    // 이 기기에서 만든 카드로 기억
+    const owned: string[] = JSON.parse(localStorage.getItem('myCards') || '[]')
+    if (!owned.includes(id)) { owned.push(id); localStorage.setItem('myCards', JSON.stringify(owned)) }
     fetch(`/api/cards/${id}`)
       .then(r => r.ok ? r.json() : null)
       .then(data => {
