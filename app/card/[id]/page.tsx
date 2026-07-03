@@ -111,62 +111,18 @@ export default async function CardPage({ params }: Props) {
       <OwnerBanner cardId={card.id} pendingBookings={pendingBookings} />
 
       {/* 명함 헤더 — 화면 꽉 차게 */}
-      {card.heroMode === 'card-image' && card.cardImage ? (
-        <section className="relative bg-black flex items-center justify-center overflow-hidden" style={{ height: '100svh' }}>
-          <img
-            src={card.cardImage}
-            alt="명함"
-            style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', display: 'block', objectFit: 'contain' }}
-          />
-          {/* 스크롤 힌트 */}
-          <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center pb-6">
-            <p className="text-white/80 text-xs mb-1">아래로 스크롤</p>
-            <span className="text-white/60 text-lg animate-bounce">↓</span>
-          </div>
-        </section>
-      ) : (
-      <section
-        className="text-white px-6 relative flex flex-col items-center justify-center"
-        style={{ background: headerBg, height: '100svh' }}
-      >
-        {/* 명함형 홈페이지 뱃지 */}
-        <div className="flex justify-center mb-6">
-          <span className="text-xs px-3 py-1 rounded-full border border-white/30 text-white/60 tracking-widest">
-            명함형 홈페이지
-          </span>
-        </div>
-
-        {card.profilePhoto && (
-          <div className="flex justify-center mb-6">
-            <img
-              src={card.profilePhoto}
-              alt="프로필"
-              className="w-40 h-40 rounded-full object-cover border-[3px] border-white/40 shadow-2xl"
-            />
-          </div>
-        )}
-        <div className="text-center">
-          {card.name && (
-            <h1 className="text-3xl font-bold leading-tight" style={{ color: tc }}>{card.name}</h1>
-          )}
-          {card.title && (
-            <p className="text-base mt-2" style={{ color: rgba(tc, 0.7) }}>{card.title}</p>
-          )}
-          {card.phone && (
-            <p className="text-base mt-1.5" style={{ color: rgba(tc, 0.55) }}>{card.phone}</p>
-          )}
-        </div>
-        {card.bio && (
-          <p className="text-sm leading-relaxed mt-5 text-center max-w-xs" style={{ color: rgba(tc, 0.8) }}>{card.bio}</p>
-        )}
-
+      <section className="relative bg-black flex items-center justify-center overflow-hidden" style={{ height: '100svh' }}>
+        <img
+          src={card.heroMode === 'card-image' && card.cardImage ? card.cardImage : `/api/og-image/${card.id}`}
+          alt={card.name ?? '명함'}
+          style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', display: 'block', objectFit: 'contain' }}
+        />
         {/* 스크롤 힌트 */}
-        <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center">
-          <p className="text-xs mb-1" style={{ color: rgba(tc, 0.45) }}>아래로 스크롤</p>
-          <span className="text-lg animate-bounce" style={{ color: rgba(tc, 0.4) }}>↓</span>
+        <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center pb-6">
+          <p className="text-white/80 text-xs mb-1">아래로 스크롤</p>
+          <span className="text-white/60 text-lg animate-bounce">↓</span>
         </div>
       </section>
-      )}
 
       {/* 연락처 + 예약 버튼 */}
       <ContactButtons
