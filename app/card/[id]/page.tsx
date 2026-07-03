@@ -109,11 +109,11 @@ export default async function CardPage({ params, searchParams }: Props) {
 
       {/* 명함 헤더 — 화면 꽉 차게 */}
       {card.heroMode === 'card-image' && card.cardImage ? (
-        <section className="relative bg-black flex items-center justify-center" style={{ minHeight: '100svh' }}>
+        <section className="relative bg-black flex items-center justify-center overflow-hidden" style={{ height: '100svh' }}>
           <img
             src={card.cardImage}
             alt="명함"
-            style={{ maxWidth: '100vw', maxHeight: '100svh', width: 'auto', height: 'auto', display: 'block' }}
+            style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', display: 'block', objectFit: 'contain' }}
           />
           {/* 스크롤 힌트 */}
           <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center pb-6">
@@ -124,7 +124,7 @@ export default async function CardPage({ params, searchParams }: Props) {
       ) : (
       <section
         className="text-white px-6 relative flex flex-col items-center justify-center"
-        style={{ background: headerBg, minHeight: '100svh' }}
+        style={{ background: headerBg, height: '100svh' }}
       >
         {/* 명함형 홈페이지 뱃지 */}
         <div className="flex justify-center mb-6">
