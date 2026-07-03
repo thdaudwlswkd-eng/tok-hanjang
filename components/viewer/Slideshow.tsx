@@ -54,4 +54,12 @@ export default function Slideshow({ photos }: Props) {
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
-                className={`w-1.5 h-1.5 rounded-full transition-all ${i === current ? 'bg-white w-4' : '
+                className={`w-1.5 h-1.5 rounded-full transition-all ${i === current ? 'bg-white w-4' : 'bg-white/50'}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
