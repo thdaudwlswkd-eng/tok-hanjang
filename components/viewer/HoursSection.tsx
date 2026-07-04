@@ -1,6 +1,6 @@
 'use client'
 
-import { BusinessHours, DAY_LABELS } from '@/lib/types'
+import { BusinessHours, DAY_LABELS, DEFAULT_HOURS } from '@/lib/types'
 
 interface Props {
   hours?: BusinessHours | null
@@ -19,9 +19,8 @@ function isOpenNow(hours: BusinessHours): boolean {
 }
 
 export default function HoursSection({ hours }: Props) {
-  if (!hours) return null
-
-  const open = isOpenNow(hours)
+  const displayHours = hours ?? DEFAULT_HOURS
+  const open = isOpenNow(displayHours)
 
   return (
     <section className="px-5 py-6 border-t border-slate-100">
@@ -33,6 +32,9 @@ export default function HoursSection({ hours }: Props) {
         </span>
       </div>
 
+      {!hours && (
+        <p className="text-xs text-slate-400 mb-3">기본 영업시간으로 표시됩니다. 편집 페이지에서 변경할 수 있어요.</p>
+      )}
       <div className="space-y-2">
         {DAYS.map((day) => {
           const now = new Date()
@@ -47,17 +49,6 @@ export default function HoursSection({ hours }: Props) {
               <span className={`w-6 ${day === 'sun' ? 'text-red-500' : day === 'sat' ? 'text-blue-500' : 'text-slate-700'}`}>
                 {DAY_LABELS[day]}
               </span>
-              {hours[day].open ? (
+              {displayHours[day].open ? (
                 <span className="text-slate-700">
-                  {hours[day].from} ~ {hours[day].to}
-                </span>
-              ) : (
-                <span className="text-slate-400">휴무</span>
-              )}
-            </div>
-          )
-        })}
-      </div>
-    </section>
-  )
-}
+                  {displayHours[d
