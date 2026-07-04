@@ -19,7 +19,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const body = await req.json()
 
   const updateData: Record<string, unknown> = {}
-  const fields = ['name', 'title', 'bio', 'career', 'profilePhoto', 'phone', 'kakaoLink', 'address', 'lat', 'lng', 'slideshowUrl', 'videoUrl', 'ogImage', 'theme', 'textColor', 'heroMode', 'cardImage'] as const
+  const fields = ['name', 'title', 'bio', 'career', 'profilePhoto', 'phone', 'fax', 'email', 'kakaoLink', 'address', 'lat', 'lng', 'slideshowUrl', 'videoUrl', 'ogImage', 'theme', 'textColor', 'heroMode', 'cardImage'] as const
 
   for (const f of fields) {
     if (f in body) updateData[f] = body[f]
@@ -42,6 +42,4 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     photos: card.photos ? JSON.parse(card.photos) : [],
     hours: card.hours ? JSON.parse(card.hours) : null,
     snsLinks: card.snsLinks ? JSON.parse(card.snsLinks) : null,
-    bookingSettings: c.bookingSettings ? JSON.parse(c.bookingSettings as string) : null,
-  })
-}
+    bookingSettings: c.bookingSettings ? JSON.parse(c.bookingSettings as string) : 
