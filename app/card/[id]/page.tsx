@@ -93,10 +93,13 @@ export default async function CardPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-white max-w-lg mx-auto pb-24">
-      <OwnerBanner cardId={card.id} pendingBookings={pendingBookings} />
 
       {/* 명함 첫 화면 */}
       <section className="relative flex items-center justify-center overflow-hidden" style={{ height: '100svh' }}>
+        {/* 오너 배너 — 히어로 위에 올려서 첫 화면이 가려지지 않게 */}
+        <div className="absolute top-0 left-0 right-0 z-10">
+          <OwnerBanner cardId={card.id} pendingBookings={pendingBookings} />
+        </div>
         {card.heroMode === 'card-image' && card.cardImage ? (
           /* 명함사진 모드 */
           <div className="w-full h-full bg-black flex items-center justify-center">
@@ -182,12 +185,4 @@ export default async function CardPage({ params }: Props) {
           <p className="text-xs text-slate-500">이 명함은 <span className="font-bold text-blue-600">톡한장</span>으로 만들었어요</p>
           <p className="text-xs text-slate-400 mt-0.5">나도 5분 만에 모바일 명함 만들기</p>
         </div>
-        <a href="/start" className="bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl whitespace-nowrap shadow">
-          나도 만들기
-        </a>
-      </div>
-
-      <QuickContactBar phone={card.phone} kakaoLink={card.kakaoLink} variant="sticky" />
-    </div>
-  )
-}
+        <a href="/start" className="bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl whitespace-n

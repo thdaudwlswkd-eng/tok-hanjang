@@ -367,7 +367,7 @@ function CreatePageInner() {
                 className="w-full py-4 bg-blue-500 text-white rounded-2xl font-bold text-base">
                 📤 공유하기
               </button>
-              <a href={`/card/${id}?edit=1`}
+              <a href={`/card/${id}`} target="_blank" rel="noopener noreferrer"
                 className="block w-full py-4 bg-slate-100 text-slate-700 rounded-2xl font-bold text-base text-center">
                 완성된 명함 보러가기 →
               </a>
@@ -386,7 +386,4 @@ function CreatePageInner() {
 export default function CreatePage() {
   return (
     <Suspense>
-      <CreatePageInner />
-    </Suspense>
-  )
-}
+      <Create
