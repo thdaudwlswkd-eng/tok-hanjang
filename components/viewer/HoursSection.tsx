@@ -10,11 +10,11 @@ const DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
 
 function isOpenNow(hours: BusinessHours): boolean {
   const now = new Date()
-  const dayIdx = now.getDay() // 0=Sun, 1=Mon...
+  const dayIdx = now.getDay()
   const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
   const today = hours[dayMap[dayIdx]]
   if (!today.open) return false
-  const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+  const hhmm = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0')
   return hhmm >= today.from && hhmm <= today.to
 }
 
@@ -27,11 +27,10 @@ export default function HoursSection({ hours }: Props) {
       <div className="flex items-center gap-2 mb-4">
         <h2 className="text-base font-bold text-slate-800">🕐 영업시간</h2>
         <span className={`flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${open ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${open ? 'bg-green-500 pulse-dot' : 'bg-red-400'}`} />
+          <span className={`w-1.5 h-1.5 rounded-full ${open ? 'bg-green-500' : 'bg-red-400'}`} />
           {open ? '영업 중' : '영업 종료'}
         </span>
       </div>
-
       {!hours && (
         <p className="text-xs text-slate-400 mb-3">기본 영업시간으로 표시됩니다. 편집 페이지에서 변경할 수 있어요.</p>
       )}
@@ -40,7 +39,6 @@ export default function HoursSection({ hours }: Props) {
           const now = new Date()
           const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
           const isToday = dayMap[now.getDay()] === day
-
           return (
             <div
               key={day}
@@ -51,4 +49,15 @@ export default function HoursSection({ hours }: Props) {
               </span>
               {displayHours[day].open ? (
                 <span className="text-slate-700">
-                  {displayHours[d
+                  {displayHours[day].from} ~ {displayHours[day].to}
+                </span>
+              ) : (
+                <span className="text-slate-400">휴무</span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}

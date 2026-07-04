@@ -87,13 +87,13 @@ export default function BasicInfoStep({
     <div className="space-y-6">
       {uploadError && (
         <div className="bg-red-50 border border-red-200 rounded-2xl px-4 py-3 text-sm text-red-600">
-          ⚠️ {uploadError}
+          {uploadError}
         </div>
       )}
 
-      {/* 1. 방식 선택 */}
+      {/* 방식 선택 */}
       <div>
-        <p className="text-sm font-bold text-slate-700 mb-3">📋 명함 첫 화면 방식 선택</p>
+        <p className="text-sm font-bold text-slate-700 mb-3">명함 첫 화면 방식 선택</p>
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
@@ -120,10 +120,10 @@ export default function BasicInfoStep({
         </div>
       </div>
 
-      {/* 2. 명함 사진 업로드 */}
+      {/* 명함 사진 업로드 */}
       {isCardImage && (
         <div className="bg-white border border-slate-200 rounded-2xl p-4">
-          <p className="text-sm font-bold text-slate-700 mb-1">🪪 명함 사진 업로드</p>
+          <p className="text-sm font-bold text-slate-700 mb-1">명함 사진 업로드</p>
           <p className="text-xs text-slate-400 mb-3">올린 사진이 첫 화면 전체에 크게 표시됩니다</p>
           {cardImage ? (
             <div className="space-y-3">
@@ -142,25 +142,25 @@ export default function BasicInfoStep({
           ) : (
             <button type="button" onClick={() => cardImageInput.current?.click()} disabled={cardImageUploading}
               className="w-full aspect-[2/1] rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center bg-slate-50 text-slate-400 gap-2 disabled:opacity-60">
-              {cardImageUploading ? <><span className="text-3xl">⏳</span><span className="text-sm">업로드 중...</span></> :
-                <><span className="text-4xl">🪪</span><span className="text-sm font-semibold text-slate-600">명함 사진 올리기</span><span className="text-xs">JPG · PNG · HEIC 가능</span></>}
+              {cardImageUploading
+                ? <><span className="text-3xl">⏳</span><span className="text-sm">업로드 중...</span></>
+                : <><span className="text-4xl">🪪</span><span className="text-sm font-semibold text-slate-600">명함 사진 올리기</span><span className="text-xs">JPG · PNG · HEIC 가능</span></>}
             </button>
           )}
           <input ref={cardImageInput} type="file" accept="image/*" className="hidden"
             onChange={(e) => e.target.files && uploadCardImage(e.target.files)} />
-
           <div className="mt-3 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl">
-            <p className="text-xs text-amber-700">💡 명함 사진에 이름·연락처가 있으면 추가 입력 없이 바로 완성이에요!</p>
+            <p className="text-xs text-amber-700">명함 사진에 이름·연락처가 있으면 추가 입력 없이 바로 완성이에요!</p>
           </div>
         </div>
       )}
 
-      {/* 프로필 모드: 사진 + 이름/직함/전화 + 색상 */}
+      {/* 프로필 모드 */}
       {!isCardImage && (
         <>
-          {/* 2. 프로필 사진 */}
+          {/* 프로필 사진 */}
           <div className="bg-white border border-slate-200 rounded-2xl p-4">
-            <p className="text-sm font-bold text-slate-700 mb-3">👤 프로필 사진</p>
+            <p className="text-sm font-bold text-slate-700 mb-3">프로필 사진</p>
             <div className="flex items-center gap-4">
               <button type="button" onClick={() => profileInput.current?.click()} disabled={profileUploading}
                 className="w-20 h-20 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden bg-slate-50 flex-shrink-0 disabled:opacity-60">
@@ -183,9 +183,9 @@ export default function BasicInfoStep({
             </div>
           </div>
 
-          {/* 3. 이름 / 직함 / 전화번호 */}
+          {/* 기본 정보 */}
           <div className="space-y-4">
-            <p className="text-sm font-bold text-slate-700">✏️ 기본 정보</p>
+            <p className="text-sm font-bold text-slate-700">기본 정보</p>
             <div>
               <label className="block text-sm font-semibold text-slate-600 mb-1.5">이름 / 상호명</label>
               <input type="text" value={name} onChange={(e) => onNameChange(e.target.value)}
@@ -207,9 +207,9 @@ export default function BasicInfoStep({
             </div>
           </div>
 
-          {/* 4. 배경색 */}
+          {/* 배경색 */}
           <div>
-            <p className="text-sm font-bold text-slate-700 mb-3">🎨 배경색</p>
+            <p className="text-sm font-bold text-slate-700 mb-3">배경색</p>
             <div className="grid gap-1 mb-2" style={{ gridTemplateColumns: 'repeat(10, 1fr)' }}>
               {COLOR_PALETTE.flat().map((color) => (
                 <ColorSwatch key={color} color={color} selected={theme === color} onClick={() => onThemeChange(color)} />
@@ -221,9 +221,9 @@ export default function BasicInfoStep({
             </div>
           </div>
 
-          {/* 5. 글자색 */}
+          {/* 글자색 */}
           <div>
-            <p className="text-sm font-bold text-slate-700 mb-3">✏️ 글자색</p>
+            <p className="text-sm font-bold text-slate-700 mb-3">글자색</p>
             <div className="grid gap-1 mb-2" style={{ gridTemplateColumns: 'repeat(10, 1fr)' }}>
               {TEXT_COLOR_PALETTE.flat().map((color) => (
                 <ColorSwatch key={color} color={color} selected={textColor === color} onClick={() => onTextColorChange(color)} withBorder />
@@ -235,21 +235,24 @@ export default function BasicInfoStep({
             </div>
           </div>
 
-          {/* 미리보기 — 실제 명함 첫화면과 동일한 디자인 */}
+          {/* 미리보기 */}
           <div>
             <p className="text-xs text-slate-400 mb-2">미리보기 (실제 명함 첫화면)</p>
             <div className="rounded-2xl py-8 px-5 flex flex-col items-center"
               style={{ background: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0)), ${bg}` }}>
-              {/* 원형 프로필 사진 */}
               <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 mb-3"
                 style={{ backgroundColor: `${tc}20`, border: `2px solid ${tc}30` }}>
                 {profilePhoto
                   ? <img src={profilePhoto} alt="프로필" className="w-full h-full object-cover" />
                   : <span className="text-3xl">👤</span>}
               </div>
-              {/* 이름 */}
               <p className="text-lg font-bold text-center" style={{ color: tc }}>{name || '이름'}</p>
-              {/* 직함 */}
               <p className="text-sm text-center mt-1" style={{ color: tc, opacity: 0.8 }}>{title || '직함'}</p>
-              {/* 전화번호 */}
-           
+              <p className="text-xs text-center mt-1" style={{ color: tc, opacity: 0.6 }}>{phone || '010-0000-0000'}</p>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}

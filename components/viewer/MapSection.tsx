@@ -25,8 +25,6 @@ export default function MapSection({ address }: Props) {
   return (
     <section className="px-5 py-6 border-t border-slate-100">
       <h2 className="text-base font-bold text-slate-800 mb-3">📍 찾아오시는 길</h2>
-
-      {/* Static map preview via Google */}
       <div className="rounded-2xl overflow-hidden mb-3 bg-slate-100 h-40 relative">
         <iframe
           src={mapEmbedUrl}
@@ -35,10 +33,25 @@ export default function MapSection({ address }: Props) {
           title="지도"
         />
       </div>
-
       <p className="text-sm text-slate-600 mb-3">{address}</p>
-
       <div className="flex gap-2">
         <a
           href={kakaoUrl}
-        
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 py-3 bg-yellow-400 text-slate-900 rounded-2xl font-bold text-center text-sm"
+        >
+          카카오맵
+        </a>
+        <a
+          href={naverUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 py-3 bg-green-500 text-white rounded-2xl font-bold text-center text-sm"
+        >
+          네이버지도
+        </a>
+      </div>
+    </section>
+  )
+}
