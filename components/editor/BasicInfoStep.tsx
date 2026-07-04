@@ -235,28 +235,21 @@ export default function BasicInfoStep({
             </div>
           </div>
 
-          {/* 미리보기 */}
+          {/* 미리보기 — 실제 명함 첫화면과 동일한 디자인 */}
           <div>
-            <p className="text-xs text-slate-400 mb-2">미리보기</p>
-            <div className="rounded-2xl p-5"
-              style={{ background: `linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0)), ${bg}` }}>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: `${tc}20` }}>
-                  {profilePhoto
-                    ? <img src={profilePhoto} alt="프로필" className="w-full h-full object-cover" />
-                    : <span className="text-xl">👤</span>}
-                </div>
-                <div>
-                  <p className="font-bold" style={{ color: tc }}>{name || '이름'}</p>
-                  <p className="text-sm" style={{ color: tc, opacity: 0.7 }}>{title || '직함'}</p>
-                  <p className="text-xs mt-0.5" style={{ color: tc, opacity: 0.5 }}>{phone || '010-0000-0000'}</p>
-                </div>
+            <p className="text-xs text-slate-400 mb-2">미리보기 (실제 명함 첫화면)</p>
+            <div className="rounded-2xl py-8 px-5 flex flex-col items-center"
+              style={{ background: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0)), ${bg}` }}>
+              {/* 원형 프로필 사진 */}
+              <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 mb-3"
+                style={{ backgroundColor: `${tc}20`, border: `2px solid ${tc}30` }}>
+                {profilePhoto
+                  ? <img src={profilePhoto} alt="프로필" className="w-full h-full object-cover" />
+                  : <span className="text-3xl">👤</span>}
               </div>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
+              {/* 이름 */}
+              <p className="text-lg font-bold text-center" style={{ color: tc }}>{name || '이름'}</p>
+              {/* 직함 */}
+              <p className="text-sm text-center mt-1" style={{ color: tc, opacity: 0.8 }}>{title || '직함'}</p>
+              {/* 전화번호 */}
+           
