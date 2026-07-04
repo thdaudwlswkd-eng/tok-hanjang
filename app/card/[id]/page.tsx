@@ -46,9 +46,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = '핸드폰으로 뚝딱 만드는 명함형 홈페이지'
   const description = [card.name, card.title].filter(Boolean).join(' · ')
-  const image = (card.heroMode === 'card-image' && card.cardImage)
-    ? card.cardImage
-    : (card.profilePhoto ?? card.photos?.[0] ?? undefined)
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
 
@@ -82,28 +79,13 @@ export default async function CardPage({ params }: Props) {
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
   const shareUrl = `${baseUrl}/card/${card.id}`
 
-  const headerBg = card.theme?.startsWith('#')
-    ? `linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0)), ${card.theme}`
-    : 'linear-gradient(to bottom, #0f172a, #1e293b)'
-
   const tc = card.textColor ?? '#ffffff'
-  function rgba(hex: string, a: number) {
-    const r = parseInt(hex.slice(1, 3), 16)
-    const g = parseInt(hex.slice(3, 5), 16)
-    const b = parseInt(hex.slice(5, 7), 16)
-    return `rgba(${r},${g},${b},${a})`
-  }
 
   const pendingBookings = await prisma.booking.count({ where: { cardId: card.id, status: 'pending' } })
 
   const parsedBookingSettings = card.bookingSettings
     ? JSON.parse(card.bookingSettings)
     : null
-
-  const hasSnsLinks = card.snsLinks && Object.values(card.snsLinks).some(Boolean)
-  const hasContent = card.name || card.title || card.bio || card.career ||
-    (card.photos && card.photos.length > 0) || card.phone || card.kakaoLink ||
-    card.address || card.hours || hasSnsLinks || card.bookingEnabled
 
   return (
     <div className="min-h-screen bg-white max-w-lg mx-auto pb-24">
@@ -112,7 +94,6 @@ export default async function CardPage({ params }: Props) {
       {/* 명함 첫 화면 */}
       <section className="relative flex items-center justify-center overflow-hidden" style={{ height: '100svh' }}>
         {card.heroMode === 'card-image' && card.cardImage ? (
-          /* 명함사진 모드 — 업로드한 이미지 전체화면 */
           <div className="w-full h-full bg-black flex items-center justify-center">
             <img
               src={card.cardImage}
@@ -121,55 +102,70 @@ export default async function CardPage({ params }: Props) {
             />
           </div>
         ) : (
-          /* 프로필 모드 — 미리보기와 동일한 디자인 전체화면 */
           <div
             className="w-full h-full flex flex-col items-center justify-center px-8"
             style={{ background: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0)), ${card.theme ?? '#0f172a'}` }}
           >
-            {/* 원형 프로필 사진 */}
             <div
               className="w-36 h-36 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 mb-6"
               style={{ backgroundColor: `${tc}20`, border: `3px solid ${tc}30` }}
             >
               {card.profilePhoto
                 ? <img src={card.profilePhoto} alt={card.name ?? '프로필'} className="w-full h-full object-cover" />
-                : <span className="text-6xl">👤</span>}
+                : <span className="text-6xl">&#x1F464;</span>}
             </div>
-
-            {/* 이름 */}
             {card.name && (
               <p className="text-3xl font-bold mb-2 text-center" style={{ color: tc }}>{card.name}</p>
             )}
-
-            {/* 직함 */}
             {card.title && (
               <p className="text-lg mb-2 text-center" style={{ color: tc, opacity: 0.8 }}>{card.title}</p>
             )}
-
-            {/* 전화번호 */}
             {card.phone && (
               <p className="text-base text-center" style={{ color: tc, opacity: 0.6 }}>{card.phone}</p>
             )}
           </div>
         )}
-
-        {/* 하단 스크롤 화살표 (텍스트 없이) */}
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
-          <span className="text-white/40 text-2xl animate-bounce">↓</span>
+          <span className="text-white/40 text-2xl animate-bounce">&#x2193;</span>
         </div>
       </section>
 
-      {/* 연락처 탭 — 히어로 바로 아래 (인라인) */}
       <QuickContactBar phone={card.phone} kakaoLink={card.kakaoLink} variant="inline" />
 
-      {/* 슬라이드쇼 */}
       {card.photos && card.photos.length > 0 && (
         <Slideshow photos={card.photos} />
       )}
 
-      {/* 업로드 동영상 */}
       {card.videoUrl && <VideoSection videoUrl={card.videoUrl} />}
 
-      {/* 경력 소개 */}
       {card.career && (
-        <section className="px-5 py-6 border-t bo
+        <section className="px-5 py-6 border-t border-slate-100">
+          <h2 className="text-base font-bold text-slate-800 mb-3">&#x1F4CB; 경력 및 소개</h2>
+          <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{card.career}</p>
+        </section>
+      )}
+
+      <SnsSection snsLinks={card.snsLinks} />
+
+      <BookingSection cardId={card.id} bookingSettings={parsedBookingSettings} />
+
+      <HoursSection hours={card.hours} />
+
+      <MapSection address={card.address} />
+
+      <ShareSection url={shareUrl} name={card.name} />
+
+      <div className="border-t border-slate-100 px-5 py-5 flex items-center justify-between bg-gradient-to-r from-blue-50 to-purple-50">
+        <div>
+          <p className="text-xs text-slate-500">이 명함은 <span className="font-bold text-blue-600">톡한장</span>으로 만들었어요</p>
+          <p className="text-xs text-slate-400 mt-0.5">나도 5분 만에 모바일 명함 만들기</p>
+        </div>
+        <a href="/start" className="bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl whitespace-nowrap shadow">
+          나도 만들기
+        </a>
+      </div>
+
+      <QuickContactBar phone={card.phone} kakaoLink={card.kakaoLink} variant="sticky" />
+    </div>
+  )
+}
