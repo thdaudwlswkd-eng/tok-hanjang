@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import React from 'react'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 async function loadKoreanFont(): Promise<ArrayBuffer | null> {
   try {
@@ -35,118 +36,105 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       return new NextResponse(body, {
         headers: {
           'Content-Type': contentType,
-          'Cache-Control': 'public, max-age=3600',
+          'Cache-Control': 'public, max-age=60, stale-while-revalidate=300',
         },
       })
     }
 
-    // profile 모드: 카드 썸네일 이미지 생성 (React.createElement — no JSX)
+    // profile 모드: 명함 첫 화면과 동일한 가로 배치 이미지 생성
     const theme = card.theme ?? '#0f172a'
-    const textColor = card.textColor ?? '#ffffff'
-    const profilePhoto = card.profilePhoto ?? null
+    const tc = card.textColor ?? '#ffffff'
+    const profilePhoto = (card as Record<string, unknown>).profilePhoto as string | null ?? null
+    const fax = (card as Record<string, unknown>).fax as string | null ?? null
+    const email = (card as Record<string, unknown>).email as string | null ?? null
 
     const fontData = await loadKoreanFont()
 
+    // 왼쪽: 원형 프로필 사진
     const photoEl = profilePhoto
       ? React.createElement('img', {
           src: profilePhoto,
-          width: 180,
-          height: 180,
+          width: 220,
+          height: 220,
           style: {
             borderRadius: '50%',
             objectFit: 'cover',
-            border: '4px solid rgba(255,255,255,0.3)',
+            border: `5px solid ${tc}50`,
+            flexShrink: 0,
           },
         })
       : React.createElement('div', {
           style: {
-            width: 180,
-            height: 180,
+            width: 220,
+            height: 220,
             borderRadius: '50%',
-            background: 'rgba(255,255,255,0.15)',
+            background: `${tc}20`,
+            border: `5px solid ${tc}30`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 80,
+            fontSize: 100,
+            flexShrink: 0,
           },
         }, '👤')
 
-    const nameEl = card.name
-      ? React.createElement('div', {
-          style: { fontSize: 54, fontWeight: 700, color: textColor },
-        }, card.name)
-      : null
-
-    const titleEl = card.title
-      ? React.createElement('div', {
-          style: { fontSize: 28, color: textColor, opacity: 0.7 },
-        }, card.title)
-      : null
-
-    const phoneEl = card.phone
-      ? React.createElement('div', {
-          style: { fontSize: 24, color: textColor, opacity: 0.5, marginTop: 4 },
-        }, card.phone)
-      : null
+    // 오른쪽: 텍스트 블록
+    const textItems = [
+      card.name
+        ? React.createElement('div', {
+            key: 'name',
+            style: { fontSize: 60, fontWeight: 700, color: tc, lineHeight: 1.2 },
+          }, card.name)
+        : null,
+      card.title
+        ? React.createElement('div', {
+            key: 'title',
+            style: { fontSize: 28, color: tc, opacity: 0.85, marginTop: 8 },
+          }, card.title)
+        : null,
+      card.phone
+        ? React.createElement('div', {
+            key: 'phone',
+            style: { fontSize: 26, color: tc, opacity: 0.7, marginTop: 16 },
+          }, card.phone)
+        : null,
+      fax
+        ? React.createElement('div', {
+            key: 'fax',
+            style: { fontSize: 22, color: tc, opacity: 0.65, marginTop: 6 },
+          }, `F. ${fax}`)
+        : null,
+      email
+        ? React.createElement('div', {
+            key: 'email',
+            style: { fontSize: 22, color: tc, opacity: 0.65, marginTop: 6 },
+          }, email)
+        : null,
+      card.address
+        ? React.createElement('div', {
+            key: 'address',
+            style: { fontSize: 20, color: tc, opacity: 0.55, marginTop: 6 },
+          }, card.address)
+        : null,
+    ].filter(Boolean)
 
     const textBlock = React.createElement('div', {
       style: {
-        marginTop: 32,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        gap: 10,
+        marginLeft: 60,
+        minWidth: 0,
+        flex: 1,
       },
-    }, nameEl, titleEl, phoneEl)
+    }, ...textItems)
 
-    const badgeEl = React.createElement('div', {
-      style: {
-        position: 'absolute',
-        top: 48,
-        fontSize: 20,
-        color: textColor,
-        opacity: 0.5,
-        border: '1px solid rgba(255,255,255,0.25)',
-        borderRadius: 999,
-        padding: '6px 20px',
-        letterSpacing: '0.15em',
-      },
-    }, '명함형 홈페이지')
-
+    // 브랜드 배지
     const brandEl = React.createElement('div', {
       style: {
         position: 'absolute',
         bottom: 36,
-        fontSize: 18,
-        color: textColor,
-        opacity: 0.2,
-        letterSpacing: '0.12em',
-      },
-    }, '톡한장')
-
-    const root = React.createElement('div', {
-      style: {
-        width: '800px',
-        height: '800px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: theme,
-        fontFamily: 'Noto Sans KR, sans-serif',
-        position: 'relative',
-      },
-    }, badgeEl, photoEl, textBlock, brandEl)
-
-    return new ImageResponse(root, {
-      width: 800,
-      height: 800,
-      ...(fontData
-        ? { fonts: [{ name: 'Noto Sans KR', data: fontData, style: 'normal' }] }
-        : {}),
-    })
-  } catch (e) {
-    console.error('[og-image]', e)
-    return new NextResponse('Error', { status: 500 })
-  }
-}
+        right: 48,
+        fontSize: 20,
+        color: tc,
+        opacity: 0.3,
+  
