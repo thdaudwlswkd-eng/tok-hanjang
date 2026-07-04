@@ -99,6 +99,8 @@ export interface CardData {
   profilePhoto?: string | null
   photos?: string[] | null
   phone?: string | null
+  fax?: string | null
+  email?: string | null
   kakaoLink?: string | null
   address?: string | null
   lat?: number | null
@@ -111,6 +113,4 @@ export interface CardData {
   textColor?: string | null
   snsLinks?: SnsLinks | null
   bookingEnabled?: boolean | null
-  heroMode?: string | null
-  cardImage?: string | null
-}
+  heroMode?

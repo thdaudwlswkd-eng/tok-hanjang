@@ -14,9 +14,15 @@ interface Props {
   name: string
   title: string
   phone: string
+  fax: string
+  email: string
+  address: string
   onNameChange: (v: string) => void
   onTitleChange: (v: string) => void
   onPhoneChange: (v: string) => void
+  onFaxChange: (v: string) => void
+  onEmailChange: (v: string) => void
+  onAddressChange: (v: string) => void
   theme: string
   onThemeChange: (c: string) => void
   textColor: string
@@ -47,8 +53,8 @@ export default function BasicInfoStep({
   heroMode, onHeroModeChange,
   cardImage, onCardImageChange,
   profilePhoto, onProfilePhotoChange,
-  name, title, phone,
-  onNameChange, onTitleChange, onPhoneChange,
+  name, title, phone, fax, email, address,
+  onNameChange, onTitleChange, onPhoneChange, onFaxChange, onEmailChange, onAddressChange,
   theme, onThemeChange, textColor, onTextColorChange,
 }: Props) {
   const [cardImageUploading, setCardImageUploading] = useState(false)
@@ -203,7 +209,25 @@ export default function BasicInfoStep({
               <input type="tel" value={phone} onChange={(e) => onPhoneChange(e.target.value)}
                 placeholder="예) 010-1234-5678"
                 className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
-              <p className="text-xs text-slate-400 mt-1">입력하면 전화·문자 버튼이 자동으로 나타납니다</p>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-600 mb-1.5">팩스번호</label>
+              <input type="tel" value={fax} onChange={(e) => onFaxChange(e.target.value)}
+                placeholder="예) 02-1234-5678"
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-600 mb-1.5">이메일</label>
+              <input type="email" value={email} onChange={(e) => onEmailChange(e.target.value)}
+                placeholder="예) example@email.com"
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-600 mb-1.5">주소</label>
+              <input type="text" value={address} onChange={(e) => onAddressChange(e.target.value)}
+                placeholder="예) 서울시 강남구 테헤란로 123"
+                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
+              <p className="text-xs text-slate-400 mt-1">명함에 표시되고 길찾기 기능에도 사용됩니다</p>
             </div>
           </div>
 
@@ -235,20 +259,27 @@ export default function BasicInfoStep({
             </div>
           </div>
 
-          {/* 미리보기 */}
+          {/* 미리보기 — 가로 배치 */}
           <div>
             <p className="text-xs text-slate-400 mb-2">미리보기 (실제 명함 첫화면)</p>
-            <div className="rounded-2xl py-8 px-5 flex flex-col items-center"
-              style={{ background: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0)), ${bg}` }}>
-              <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 mb-3"
-                style={{ backgroundColor: `${tc}20`, border: `2px solid ${tc}30` }}>
+            <div className="rounded-2xl p-5 flex items-center gap-4"
+              style={{ background: `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0)), ${bg}` }}>
+              {/* 왼쪽: 원형 사진 */}
+              <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: `${tc}20`, border: `2px solid ${tc}40` }}>
                 {profilePhoto
                   ? <img src={profilePhoto} alt="프로필" className="w-full h-full object-cover" />
-                  : <span className="text-3xl">👤</span>}
+                  : <span className="text-2xl">👤</span>}
               </div>
-              <p className="text-lg font-bold text-center" style={{ color: tc }}>{name || '이름'}</p>
-              <p className="text-sm text-center mt-1" style={{ color: tc, opacity: 0.8 }}>{title || '직함'}</p>
-              <p className="text-xs text-center mt-1" style={{ color: tc, opacity: 0.6 }}>{phone || '010-0000-0000'}</p>
+              {/* 오른쪽: 텍스트 */}
+              <div className="flex flex-col min-w-0">
+                <p className="text-base font-bold truncate" style={{ color: tc }}>{name || '이름'}</p>
+                {(title) && <p className="text-xs mt-0.5 truncate" style={{ color: tc, opacity: 0.8 }}>{title}</p>}
+                {(phone) && <p className="text-xs mt-0.5 truncate" style={{ color: tc, opacity: 0.65 }}>{phone}</p>}
+                {(fax) && <p className="text-xs mt-0.5 truncate" style={{ color: tc, opacity: 0.6 }}>F. {fax}</p>}
+                {(email) && <p className="text-xs mt-0.5 truncate" style={{ color: tc, opacity: 0.6 }}>{email}</p>}
+                {(address) && <p className="text-xs mt-0.5 truncate" style={{ color: tc, opacity: 0.55 }}>{address}</p>}
+              </div>
             </div>
           </div>
         </>

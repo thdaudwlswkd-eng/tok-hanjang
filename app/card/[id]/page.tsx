@@ -21,6 +21,8 @@ interface Props {
 
 interface RawCard extends CardData {
   bookingSettings?: string | null
+  fax?: string | null
+  email?: string | null
 }
 
 const getCard = cache(async (id: string): Promise<RawCard | null> => {
@@ -34,6 +36,8 @@ const getCard = cache(async (id: string): Promise<RawCard | null> => {
       hours: card.hours ? JSON.parse(card.hours) as BusinessHours : null,
       snsLinks: card.snsLinks ? JSON.parse(card.snsLinks) as SnsLinks : null,
       bookingSettings: raw.bookingSettings as string | null ?? null,
+      fax: raw.fax as string | null ?? null,
+      email: raw.email as string | null ?? null,
     }
   } catch {
     return null
@@ -94,6 +98,7 @@ export default async function CardPage({ params }: Props) {
       {/* 명함 첫 화면 */}
       <section className="relative flex items-center justify-center overflow-hidden" style={{ height: '100svh' }}>
         {card.heroMode === 'card-image' && card.cardImage ? (
+          /* 명함사진 모드 */
           <div className="w-full h-full bg-black flex items-center justify-center">
             <img
               src={card.cardImage}
@@ -102,29 +107,46 @@ export default async function CardPage({ params }: Props) {
             />
           </div>
         ) : (
+          /* 프로필 모드 — 가로 배치 */
           <div
-            className="w-full h-full flex flex-col items-center justify-center px-8"
-            style={{ background: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0)), ${card.theme ?? '#0f172a'}` }}
+            className="w-full h-full flex items-center justify-center px-8"
+            style={{ background: `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0)), ${card.theme ?? '#0f172a'}` }}
           >
+            {/* 왼쪽: 원형 프로필 사진 */}
             <div
-              className="w-36 h-36 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 mb-6"
-              style={{ backgroundColor: `${tc}20`, border: `3px solid ${tc}30` }}
+              className="w-28 h-28 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: `${tc}20`, border: `3px solid ${tc}40` }}
             >
               {card.profilePhoto
                 ? <img src={card.profilePhoto} alt={card.name ?? '프로필'} className="w-full h-full object-cover" />
-                : <span className="text-6xl">&#x1F464;</span>}
+                : <span className="text-5xl">&#x1F464;</span>}
             </div>
-            {card.name && (
-              <p className="text-3xl font-bold mb-2 text-center" style={{ color: tc }}>{card.name}</p>
-            )}
-            {card.title && (
-              <p className="text-lg mb-2 text-center" style={{ color: tc, opacity: 0.8 }}>{card.title}</p>
-            )}
-            {card.phone && (
-              <p className="text-base text-center" style={{ color: tc, opacity: 0.6 }}>{card.phone}</p>
-            )}
+
+            {/* 오른쪽: 텍스트 정보 */}
+            <div className="ml-6 flex flex-col min-w-0">
+              {card.name && (
+                <p className="text-2xl font-bold leading-tight" style={{ color: tc }}>{card.name}</p>
+              )}
+              {card.title && (
+                <p className="text-sm mt-1" style={{ color: tc, opacity: 0.85 }}>{card.title}</p>
+              )}
+              {card.phone && (
+                <p className="text-sm mt-2" style={{ color: tc, opacity: 0.7 }}>{card.phone}</p>
+              )}
+              {(card as RawCard).fax && (
+                <p className="text-xs mt-1" style={{ color: tc, opacity: 0.65 }}>F. {(card as RawCard).fax}</p>
+              )}
+              {(card as RawCard).email && (
+                <p className="text-xs mt-1" style={{ color: tc, opacity: 0.65 }}>{(card as RawCard).email}</p>
+              )}
+              {card.address && (
+                <p className="text-xs mt-1 leading-relaxed" style={{ color: tc, opacity: 0.6 }}>{card.address}</p>
+              )}
+            </div>
           </div>
         )}
+
+        {/* 하단 스크롤 화살표 */}
         <div className="absolute bottom-6 left-0 right-0 flex justify-center">
           <span className="text-white/40 text-2xl animate-bounce">&#x2193;</span>
         </div>

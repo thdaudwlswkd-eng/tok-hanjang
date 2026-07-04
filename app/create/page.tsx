@@ -43,6 +43,8 @@ function CreatePageInner() {
   const [bookingEnabled, setBookingEnabled] = useState(false)
   const [bookingSettings, setBookingSettings] = useState<BookingSettings>(DEFAULT_BOOKING_SETTINGS)
   const [videoUrl, setVideoUrl] = useState('')
+  const [fax, setFax] = useState('')
+  const [email, setEmail] = useState('')
   const [address, setAddress] = useState('')
   const [hours, setHours] = useState<BusinessHours | null>(null)
   const [heroMode, setHeroMode] = useState('profile')
@@ -73,6 +75,8 @@ function CreatePageInner() {
         if (data.bookingEnabled !== undefined) setBookingEnabled(data.bookingEnabled)
         if (data.bookingSettings) setBookingSettings(typeof data.bookingSettings === 'string' ? JSON.parse(data.bookingSettings) : data.bookingSettings)
         if (data.videoUrl) setVideoUrl(data.videoUrl)
+        if (data.fax) setFax(data.fax)
+        if (data.email) setEmail(data.email)
         if (data.address) setAddress(data.address)
         if (data.hours) setHours(typeof data.hours === 'string' ? JSON.parse(data.hours) : data.hours)
         if (data.heroMode) setHeroMode(data.heroMode)
@@ -88,8 +92,8 @@ function CreatePageInner() {
     theme, textColor, phone, kakaoLink, snsLinks,
     bookingEnabled,
     bookingSettings: JSON.stringify(bookingSettings),
-    videoUrl, address, heroMode, cardImage, slideshowUrl, hours,
-  }), [photos, profilePhoto, name, title, bio, career, theme, textColor, phone, kakaoLink, snsLinks, bookingEnabled, bookingSettings, videoUrl, address, heroMode, cardImage, slideshowUrl, hours])
+    videoUrl, fax, email, address, heroMode, cardImage, slideshowUrl, hours,
+  }), [photos, profilePhoto, name, title, bio, career, theme, textColor, phone, kakaoLink, snsLinks, bookingEnabled, bookingSettings, videoUrl, fax, email, address, heroMode, cardImage, slideshowUrl, hours])
 
   async function save() {
     setSaving(true); setSaveError('')
@@ -247,9 +251,15 @@ function CreatePageInner() {
             name={name}
             title={title}
             phone={phone}
+            fax={fax}
+            email={email}
+            address={address}
             onNameChange={setName}
             onTitleChange={setTitle}
             onPhoneChange={setPhone}
+            onFaxChange={setFax}
+            onEmailChange={setEmail}
+            onAddressChange={setAddress}
             theme={theme}
             onThemeChange={setTheme}
             textColor={textColor}

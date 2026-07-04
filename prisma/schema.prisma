@@ -25,6 +25,8 @@ model Card {
 
   // Contact
   phone        String?
+  fax          String?
+  email        String?
   kakaoLink    String?
 
   // Location
@@ -71,6 +73,4 @@ model Booking {
   date      String
   time      String
   guests    Int?
-  note      String?
-  status    String   @default("pending")
-}
+  note      Stri
