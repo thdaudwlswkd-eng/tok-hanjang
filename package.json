@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma db push && next build",
+    "build": "prisma db push; next build",
     "start": "next start",
     "db:push": "prisma db push --env-file .env.local",
-    "db:studio": "prisma studio --env-file .env.local"
+    "db:studio": "prisma studio --env-file .env.local",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.16.0",
