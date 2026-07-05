@@ -386,4 +386,7 @@ function CreatePageInner() {
 export default function CreatePage() {
   return (
     <Suspense>
-      <Create
+      <CreatePageInner />
+    </Suspense>
+  )
+}

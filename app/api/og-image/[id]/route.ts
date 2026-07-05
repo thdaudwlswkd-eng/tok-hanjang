@@ -137,4 +137,34 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         fontSize: 20,
         color: tc,
         opacity: 0.3,
-  
+        letterSpacing: '0.1em',
+      },
+    }, '톡한장')
+
+    const root = React.createElement('div', {
+      style: {
+        width: '1200px',
+        height: '630px',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0)), ${theme}`,
+        fontFamily: 'Noto Sans KR, sans-serif',
+        position: 'relative',
+        padding: '0 80px',
+      },
+    }, photoEl, textBlock, brandEl)
+
+    return new ImageResponse(root, {
+      width: 1200,
+      height: 630,
+      ...(fontData
+        ? { fonts: [{ name: 'Noto Sans KR', data: fontData, style: 'normal' }] }
+        : {}),
+    })
+  } catch (e) {
+    console.error('[og-image]', e)
+    return new NextResponse('Error', { status: 500 })
+  }
+}
