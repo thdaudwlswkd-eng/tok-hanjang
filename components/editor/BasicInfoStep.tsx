@@ -104,6 +104,50 @@ export default function BasicInfoStep({
           onChange={(e) => e.target.files && uploadCardImage(e.target.files)} />
       </div>
 
+      {/* 배경색 */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-4">
+        <p className="text-sm font-bold text-slate-700 mb-3">배경색</p>
+        <div className="space-y-1.5">
+          {COLOR_PALETTE.map((row, ri) => (
+            <div key={ri} className="grid grid-cols-10 gap-1.5">
+              {row.map((c) => (
+                <ColorSwatch
+                  key={c} color={c} selected={theme === c}
+                  onClick={() => onThemeChange(c)}
+                  withBorder={['#f8fafc','#fef2f2','#fff7ed','#fffbeb','#f0fdf4','#ecfeff','#eff6ff','#eef2ff','#faf5ff','#fdf4ff'].includes(c)}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 flex items-center gap-2">
+          <div className="w-6 h-6 rounded-lg border border-slate-200 flex-shrink-0" style={{ backgroundColor: theme }} />
+          <span className="text-xs text-slate-400 font-mono">{theme}</span>
+        </div>
+      </div>
+
+      {/* 글자색 */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-4">
+        <p className="text-sm font-bold text-slate-700 mb-3">글자색</p>
+        <div className="space-y-1.5">
+          {TEXT_COLOR_PALETTE.map((row, ri) => (
+            <div key={ri} className="grid grid-cols-10 gap-1.5">
+              {row.map((c) => (
+                <ColorSwatch
+                  key={c} color={c} selected={textColor === c}
+                  onClick={() => onTextColorChange(c)}
+                  withBorder={c === '#ffffff'}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 flex items-center gap-2">
+          <div className="w-6 h-6 rounded-lg border border-slate-200 flex-shrink-0" style={{ backgroundColor: textColor }} />
+          <span className="text-xs text-slate-400 font-mono">{textColor}</span>
+        </div>
+      </div>
+
       {/* 기본 정보 — 첫 화면 노출 */}
       <div>
         <p className="text-sm font-bold text-slate-700 mb-1">기본 정보 <span className="text-blue-500 font-normal text-xs">첫 화면에 표시</span></p>
@@ -159,13 +203,16 @@ export default function BasicInfoStep({
       {cardImage && (
         <div>
           <p className="text-xs text-slate-400 mb-2">미리보기 (명함 첫 화면)</p>
-          <div className="relative rounded-2xl overflow-hidden" style={{ aspectRatio: '9/16', maxHeight: 320 }}>
-            <img src={cardImage} alt="미리보기" className="absolute inset-0 w-full h-full object-contain bg-black" />
+          <div
+            className="relative rounded-2xl overflow-hidden"
+            style={{ aspectRatio: '9/16', maxHeight: 320, background: theme }}
+          >
+            <img src={cardImage} alt="미리보기" className="absolute inset-0 w-full h-full" style={{ objectFit: 'contain' }} />
             {(name || title) && (
               <div className="absolute bottom-0 left-0 right-0 px-4 pb-5"
-                style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.65))' }}>
-                {name && <p className="text-white text-base font-bold leading-tight">{name}</p>}
-                {title && <p className="text-white/80 text-xs mt-0.5">{title}</p>}
+                style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.6))' }}>
+                {name && <p className="text-base font-bold leading-tight drop-shadow" style={{ color: textColor }}>{name}</p>}
+                {title && <p className="text-xs mt-0.5 drop-shadow" style={{ color: textColor, opacity: 0.85 }}>{title}</p>}
               </div>
             )}
           </div>
