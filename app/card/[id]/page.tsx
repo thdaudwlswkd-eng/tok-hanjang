@@ -55,7 +55,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const rawCard = card as Record<string, unknown>
   const v = rawCard.updatedAt instanceof Date ? rawCard.updatedAt.getTime() : 0
-  const imageUrl = `${baseUrl}/api/og-image/${params.id}?v=${v}`
+  const cardImageUrl = rawCard.cardImage as string | null ?? null
+  const imageUrl = cardImageUrl ?? `${baseUrl}/api/og-image/${params.id}?v=${v}`
   const cardUrl = `${baseUrl}/card/${params.id}`
 
   return {
@@ -224,7 +225,4 @@ export default async function CardPage({ params }: Props) {
         </a>
       </div>
 
-      <QuickContactBar phone={card.phone} kakaoLink={card.kakaoLink} variant="sticky" />
-    </div>
-  )
-}
+      <QuickContactBar p
