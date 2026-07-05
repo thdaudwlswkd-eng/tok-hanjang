@@ -225,4 +225,7 @@ export default async function CardPage({ params }: Props) {
         </a>
       </div>
 
-      <QuickContactBar p
+      <QuickContactBar phone={card.phone} kakaoLink={card.kakaoLink} variant="sticky" />
+    </div>
+  )
+}
