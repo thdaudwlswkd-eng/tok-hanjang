@@ -114,7 +114,7 @@ export default async function CardPage({ params }: Props) {
               src={card.cardImage}
               alt={card.name ?? '명함'}
               className="w-full h-full"
-              style={{ objectFit: 'contain' }}
+              style={{ objectFit: 'cover' }}
             />
           </div>
         ) : (
