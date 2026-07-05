@@ -53,15 +53,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
 
-  // OG 이미지: 프로필 사진 직접 사용 (API 타임아웃 방지)
-  // card-image 모드이면 cardImage, 아니면 profilePhoto, 없으면 og-image API fallback
+  // 명함 저장 시 카카오톡 OG 캐시 강제 갱신
   const rawCard = card as Record<string, unknown>
   const v = rawCard.updatedAt instanceof Date ? rawCard.updatedAt.getTime() : 0
-  const profilePhoto = rawCard.profilePhoto as string | null ?? null
-  const cardImage = rawCard.cardImage as string | null ?? null
-  const imageUrl = (card.heroMode === 'card-image' && cardImage)
-    ? cardImage
-    : (profilePhoto ?? `${baseUrl}/api/og-image/${params.id}?v=${v}`)
+  const imageUrl = `${baseUrl}/api/og-image/${params.id}?v=${v}`
   const cardUrl = `${baseUrl}/card/${params.id}`
 
   return {
@@ -103,67 +98,95 @@ export default async function CardPage({ params }: Props) {
     <div className="min-h-screen bg-white max-w-lg mx-auto pb-24">
 
       {/* 명함 첫 화면 */}
-      <section className="relative flex items-center justify-center overflow-hidden" style={{ height: '100svh' }}>
-        {/* 오너 배너 — 히어로 위에 올려서 첫 화면이 가려지지 않게 */}
+      <section className="relative overflow-hidden" style={{ height: '100svh' }}>
+        {/* 오너 배너 */}
         <div className="absolute top-0 left-0 right-0 z-10">
           <OwnerBanner cardId={card.id} pendingBookings={pendingBookings} />
         </div>
-        {card.heroMode === 'card-image' && card.cardImage ? (
-          /* 명함사진 모드 */
-          <div className="w-full h-full bg-black flex items-center justify-center">
+
+        {/* 배경: 명함 이미지 or 테마 컬러 */}
+        {card.cardImage ? (
+          <div className="absolute inset-0 bg-black flex items-center justify-center">
             <img
               src={card.cardImage}
               alt={card.name ?? '명함'}
-              style={{ maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', display: 'block', objectFit: 'contain' }}
+              className="w-full h-full"
+              style={{ objectFit: 'contain' }}
             />
           </div>
         ) : (
-          /* 프로필 모드 — 가로 배치 */
           <div
-            className="w-full h-full flex items-center justify-center px-8"
+            className="absolute inset-0"
             style={{ background: `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0)), ${card.theme ?? '#0f172a'}` }}
-          >
-            {/* 왼쪽: 원형 프로필 사진 */}
-            <div
-              className="w-28 h-28 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: `${tc}20`, border: `3px solid ${tc}40` }}
-            >
-              {card.profilePhoto
-                ? <img src={card.profilePhoto} alt={card.name ?? '프로필'} className="w-full h-full object-cover" />
-                : <span className="text-5xl">&#x1F464;</span>}
-            </div>
+          />
+        )}
 
-            {/* 오른쪽: 텍스트 정보 */}
-            <div className="ml-6 flex flex-col min-w-0">
-              {card.name && (
-                <p className="text-2xl font-bold leading-tight" style={{ color: tc }}>{card.name}</p>
-              )}
-              {card.title && (
-                <p className="text-sm mt-1" style={{ color: tc, opacity: 0.85 }}>{card.title}</p>
-              )}
-              {card.phone && (
-                <p className="text-sm mt-2" style={{ color: tc, opacity: 0.7 }}>{card.phone}</p>
-              )}
-              {(card as RawCard).fax && (
-                <p className="text-xs mt-1" style={{ color: tc, opacity: 0.65 }}>F. {(card as RawCard).fax}</p>
-              )}
-              {(card as RawCard).email && (
-                <p className="text-xs mt-1" style={{ color: tc, opacity: 0.65 }}>{(card as RawCard).email}</p>
-              )}
-              {card.address && (
-                <p className="text-xs mt-1 leading-relaxed" style={{ color: tc, opacity: 0.6 }}>{card.address}</p>
-              )}
-            </div>
+        {/* 이름 + 직함 오버레이 (하단) */}
+        {(card.name || card.title) && (
+          <div
+            className="absolute bottom-0 left-0 right-0 px-6 pb-16"
+            style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.65))' }}
+          >
+            {card.name && (
+              <p className="text-white text-2xl font-bold leading-tight drop-shadow">{card.name}</p>
+            )}
+            {card.title && (
+              <p className="text-white/80 text-sm mt-1 drop-shadow">{card.title}</p>
+            )}
           </div>
         )}
 
-        {/* 하단 스크롤 화살표 */}
-        <div className="absolute bottom-6 left-0 right-0 flex justify-center">
+        {/* 스크롤 화살표 */}
+        <div className="absolute bottom-5 left-0 right-0 flex justify-center z-10">
           <span className="text-white/40 text-2xl animate-bounce">&#x2193;</span>
         </div>
       </section>
 
       <QuickContactBar phone={card.phone} kakaoLink={card.kakaoLink} variant="inline" />
+
+      {/* 연락처 정보 */}
+      {(card.phone || (card as RawCard).fax || (card as RawCard).email || card.address) && (
+        <section className="px-5 py-5 border-b border-slate-100">
+          <div className="space-y-3">
+            {card.phone && (
+              <div className="flex items-start gap-3">
+                <span className="text-xl mt-0.5">📞</span>
+                <div>
+                  <p className="text-xs text-slate-400 mb-0.5">전화</p>
+                  <a href={`tel:${card.phone}`} className="text-sm font-semibold text-slate-800">{card.phone}</a>
+                </div>
+              </div>
+            )}
+            {(card as RawCard).fax && (
+              <div className="flex items-start gap-3">
+                <span className="text-xl mt-0.5">📠</span>
+                <div>
+                  <p className="text-xs text-slate-400 mb-0.5">팩스</p>
+                  <p className="text-sm font-semibold text-slate-800">{(card as RawCard).fax}</p>
+                </div>
+              </div>
+            )}
+            {(card as RawCard).email && (
+              <div className="flex items-start gap-3">
+                <span className="text-xl mt-0.5">✉️</span>
+                <div>
+                  <p className="text-xs text-slate-400 mb-0.5">이메일</p>
+                  <a href={`mailto:${(card as RawCard).email}`} className="text-sm font-semibold text-slate-800">{(card as RawCard).email}</a>
+                </div>
+              </div>
+            )}
+            {card.address && (
+              <div className="flex items-start gap-3">
+                <span className="text-xl mt-0.5">📍</span>
+                <div>
+                  <p className="text-xs text-slate-400 mb-0.5">주소</p>
+                  <p className="text-sm text-slate-700 leading-relaxed">{card.address}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {card.photos && card.photos.length > 0 && (
         <Slideshow photos={card.photos} />
@@ -188,17 +211,4 @@ export default async function CardPage({ params }: Props) {
 
       <ShareSection url={shareUrl} name={card.name} />
 
-      <div className="border-t border-slate-100 px-5 py-5 flex items-center justify-between bg-gradient-to-r from-blue-50 to-purple-50">
-        <div>
-          <p className="text-xs text-slate-500">이 명함은 <span className="font-bold text-blue-600">톡한장</span>으로 만들었어요</p>
-          <p className="text-xs text-slate-400 mt-0.5">나도 5분 만에 모바일 명함 만들기</p>
-        </div>
-        <a href="/start" className="bg-blue-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl whitespace-nowrap shadow">
-          나도 만들기
-        </a>
-      </div>
-
-      <QuickContactBar phone={card.phone} kakaoLink={card.kakaoLink} variant="sticky" />
-    </div>
-  )
-}
+      <div classNam

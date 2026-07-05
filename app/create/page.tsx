@@ -47,7 +47,6 @@ function CreatePageInner() {
   const [email, setEmail] = useState('')
   const [address, setAddress] = useState('')
   const [hours, setHours] = useState<BusinessHours | null>(null)
-  const [heroMode, setHeroMode] = useState('profile')
   const [cardImage, setCardImage] = useState('')
   const [slideshowUrl, setSlideshowUrl] = useState('')
   const [loaded, setLoaded] = useState(false)
@@ -79,7 +78,6 @@ function CreatePageInner() {
         if (data.email) setEmail(data.email)
         if (data.address) setAddress(data.address)
         if (data.hours) setHours(typeof data.hours === 'string' ? JSON.parse(data.hours) : data.hours)
-        if (data.heroMode) setHeroMode(data.heroMode)
         if (data.cardImage) setCardImage(data.cardImage)
         if (data.slideshowUrl) setSlideshowUrl(data.slideshowUrl)
         setLoaded(true)
@@ -92,8 +90,8 @@ function CreatePageInner() {
     theme, textColor, phone, kakaoLink, snsLinks,
     bookingEnabled,
     bookingSettings: JSON.stringify(bookingSettings),
-    videoUrl, fax, email, address, heroMode, cardImage, slideshowUrl, hours,
-  }), [photos, profilePhoto, name, title, bio, career, theme, textColor, phone, kakaoLink, snsLinks, bookingEnabled, bookingSettings, videoUrl, fax, email, address, heroMode, cardImage, slideshowUrl, hours])
+    videoUrl, fax, email, address, heroMode: 'card-image', cardImage, slideshowUrl, hours,
+  }), [photos, profilePhoto, name, title, bio, career, theme, textColor, phone, kakaoLink, snsLinks, bookingEnabled, bookingSettings, videoUrl, fax, email, address, cardImage, slideshowUrl, hours])
 
   async function save() {
     setSaving(true); setSaveError('')
@@ -118,7 +116,7 @@ function CreatePageInner() {
     if (!loaded) return
     const timer = setTimeout(() => { saveRef.current() }, 800)
     return () => clearTimeout(timer)
-  }, [photos, profilePhoto, cardImage, slideshowUrl, loaded])
+  }, [photos, cardImage, slideshowUrl, loaded])
 
   async function saveField(fields: Record<string, unknown>) {
     try {
@@ -242,12 +240,8 @@ function CreatePageInner() {
       <div className="flex-1 px-5 py-6 overflow-y-auto">
         {step === 0 && (
           <BasicInfoStep
-            heroMode={heroMode}
-            onHeroModeChange={setHeroMode}
             cardImage={cardImage}
             onCardImageChange={handleCardImageChange}
-            profilePhoto={profilePhoto}
-            onProfilePhotoChange={handleProfilePhotoChange}
             name={name}
             title={title}
             phone={phone}
@@ -278,7 +272,7 @@ function CreatePageInner() {
             onVideoChange={handleVideoChange}
             slideshowVideoUrl={slideshowUrl}
             onSlideshowVideoUrlChange={handleSlideshowUrlChange}
-            heroMode={heroMode}
+            heroMode="card-image"
           />
         )}
         {step === 2 && (
@@ -390,3 +384,4 @@ export default function CreatePage() {
     </Suspense>
   )
 }
+                                                                                                                                                                                                                                                                                                   

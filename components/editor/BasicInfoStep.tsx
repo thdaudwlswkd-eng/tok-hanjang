@@ -5,12 +5,8 @@ import { COLOR_PALETTE, TEXT_COLOR_PALETTE } from '@/lib/types'
 import { compressImage, uploadOneFile } from '@/lib/upload-utils'
 
 interface Props {
-  heroMode: string
-  onHeroModeChange: (mode: string) => void
   cardImage: string
   onCardImageChange: (url: string) => void
-  profilePhoto: string
-  onProfilePhotoChange: (url: string) => void
   name: string
   title: string
   phone: string
@@ -50,22 +46,14 @@ function ColorSwatch({ color, selected, onClick, withBorder = false }: {
 }
 
 export default function BasicInfoStep({
-  heroMode, onHeroModeChange,
   cardImage, onCardImageChange,
-  profilePhoto, onProfilePhotoChange,
   name, title, phone, fax, email, address,
   onNameChange, onTitleChange, onPhoneChange, onFaxChange, onEmailChange, onAddressChange,
   theme, onThemeChange, textColor, onTextColorChange,
 }: Props) {
   const [cardImageUploading, setCardImageUploading] = useState(false)
-  const [profileUploading, setProfileUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
   const cardImageInput = useRef<HTMLInputElement>(null)
-  const profileInput = useRef<HTMLInputElement>(null)
-
-  const isCardImage = heroMode === 'card-image'
-  const bg = theme || '#0f172a'
-  const tc = textColor || '#ffffff'
 
   async function uploadCardImage(files: FileList) {
     if (!files.length) return
@@ -74,19 +62,8 @@ export default function BasicInfoStep({
       const url = await uploadOneFile(await compressImage(files[0]))
       onCardImageChange(url)
     } catch (e) {
-      setUploadError('명함 사진 업로드 실패: ' + (e as Error).message)
+      setUploadError('이미지 업로드 실패: ' + (e as Error).message)
     } finally { setCardImageUploading(false) }
-  }
-
-  async function uploadProfile(files: FileList) {
-    if (!files.length) return
-    setProfileUploading(true); setUploadError('')
-    try {
-      const url = await uploadOneFile(await compressImage(files[0]))
-      onProfilePhotoChange(url)
-    } catch (e) {
-      setUploadError('프로필 사진 업로드 실패: ' + (e as Error).message)
-    } finally { setProfileUploading(false) }
   }
 
   return (
@@ -97,192 +74,102 @@ export default function BasicInfoStep({
         </div>
       )}
 
-      {/* 방식 선택 */}
+      {/* 이미지 업로드 */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-4">
+        <p className="text-sm font-bold text-slate-700 mb-1">이미지 업로드 (명함)</p>
+        <p className="text-xs text-slate-400 mb-3">업로드한 이미지가 명함 첫 화면 전체에 표시됩니다</p>
+        {cardImage ? (
+          <div className="space-y-3">
+            <img src={cardImage} alt="명함 이미지" className="w-full rounded-2xl object-contain border border-slate-100 max-h-56" />
+            <div className="flex gap-2">
+              <button type="button" onClick={() => cardImageInput.current?.click()} disabled={cardImageUploading}
+                className="flex-1 py-2.5 border border-blue-300 text-blue-500 rounded-xl text-sm font-semibold">
+                이미지 변경
+              </button>
+              <button type="button" onClick={() => onCardImageChange('')}
+                className="flex-1 py-2.5 border border-red-200 text-red-400 rounded-xl text-sm font-semibold">
+                삭제
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button type="button" onClick={() => cardImageInput.current?.click()} disabled={cardImageUploading}
+            className="w-full aspect-[2/1] rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center bg-slate-50 text-slate-400 gap-2 disabled:opacity-60">
+            {cardImageUploading
+              ? <><span className="text-3xl">⏳</span><span className="text-sm">업로드 중...</span></>
+              : <><span className="text-4xl">🪪</span><span className="text-sm font-semibold text-slate-600">명함 이미지 올리기</span><span className="text-xs">JPG · PNG · HEIC 가능</span></>}
+          </button>
+        )}
+        <input ref={cardImageInput} type="file" accept="image/*" className="hidden"
+          onChange={(e) => e.target.files && uploadCardImage(e.target.files)} />
+      </div>
+
+      {/* 기본 정보 — 첫 화면 노출 */}
       <div>
-        <p className="text-sm font-bold text-slate-700 mb-3">명함 첫 화면 방식 선택</p>
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => onHeroModeChange('profile')}
-            className={`p-4 rounded-2xl border-2 text-left transition-colors ${
-              !isCardImage ? 'border-blue-500 bg-blue-50' : 'border-slate-200 bg-white'
-            }`}
-          >
-            <p className="text-xl mb-1">👤</p>
-            <p className="text-sm font-bold text-slate-700">프로필 작성</p>
-            <p className="text-xs text-slate-400 mt-0.5">이름·사진·소개 직접 입력</p>
-          </button>
-          <button
-            type="button"
-            onClick={() => onHeroModeChange('card-image')}
-            className={`p-4 rounded-2xl border-2 text-left transition-colors ${
-              isCardImage ? 'border-blue-500 bg-blue-50' : 'border-slate-200 bg-white'
-            }`}
-          >
-            <p className="text-xl mb-1">🪪</p>
-            <p className="text-sm font-bold text-slate-700">명함 사진</p>
-            <p className="text-xs text-slate-400 mt-0.5">내 명함을 사진으로 올리기</p>
-          </button>
+        <p className="text-sm font-bold text-slate-700 mb-1">기본 정보 <span className="text-blue-500 font-normal text-xs">첫 화면에 표시</span></p>
+        <p className="text-xs text-slate-400 mb-3">이미지 위에 이름과 직함이 표시됩니다</p>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5">이름 / 상호명</label>
+            <input type="text" value={name} onChange={(e) => onNameChange(e.target.value)}
+              placeholder="예) 김철수, 철수네 카페"
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5">직함 / 하는 일</label>
+            <input type="text" value={title} onChange={(e) => onTitleChange(e.target.value)}
+              placeholder="예) 인테리어 전문가, 카페 운영"
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          </div>
         </div>
       </div>
 
-      {/* 명함 사진 업로드 */}
-      {isCardImage && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-4">
-          <p className="text-sm font-bold text-slate-700 mb-1">명함 사진 업로드</p>
-          <p className="text-xs text-slate-400 mb-3">올린 사진이 첫 화면 전체에 크게 표시됩니다</p>
-          {cardImage ? (
-            <div className="space-y-3">
-              <img src={cardImage} alt="명함 사진" className="w-full rounded-2xl object-contain border border-slate-100 max-h-56" />
-              <div className="flex gap-2">
-                <button type="button" onClick={() => cardImageInput.current?.click()} disabled={cardImageUploading}
-                  className="flex-1 py-2.5 border border-blue-300 text-blue-500 rounded-xl text-sm font-semibold">
-                  사진 변경
-                </button>
-                <button type="button" onClick={() => onCardImageChange('')}
-                  className="flex-1 py-2.5 border border-red-200 text-red-400 rounded-xl text-sm font-semibold">
-                  삭제
-                </button>
-              </div>
-            </div>
-          ) : (
-            <button type="button" onClick={() => cardImageInput.current?.click()} disabled={cardImageUploading}
-              className="w-full aspect-[2/1] rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center bg-slate-50 text-slate-400 gap-2 disabled:opacity-60">
-              {cardImageUploading
-                ? <><span className="text-3xl">⏳</span><span className="text-sm">업로드 중...</span></>
-                : <><span className="text-4xl">🪪</span><span className="text-sm font-semibold text-slate-600">명함 사진 올리기</span><span className="text-xs">JPG · PNG · HEIC 가능</span></>}
-            </button>
-          )}
-          <input ref={cardImageInput} type="file" accept="image/*" className="hidden"
-            onChange={(e) => e.target.files && uploadCardImage(e.target.files)} />
-          <div className="mt-3 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-xl">
-            <p className="text-xs text-amber-700">명함 사진에 이름·연락처가 있으면 추가 입력 없이 바로 완성이에요!</p>
+      {/* 연락처 — 첫 화면 미노출 */}
+      <div>
+        <p className="text-sm font-bold text-slate-700 mb-1">연락처 정보 <span className="text-slate-400 font-normal text-xs">첫 화면 아래에 표시</span></p>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5">전화번호</label>
+            <input type="tel" value={phone} onChange={(e) => onPhoneChange(e.target.value)}
+              placeholder="예) 010-1234-5678"
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5">팩스번호</label>
+            <input type="tel" value={fax} onChange={(e) => onFaxChange(e.target.value)}
+              placeholder="예) 02-1234-5678"
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5">이메일</label>
+            <input type="email" value={email} onChange={(e) => onEmailChange(e.target.value)}
+              placeholder="예) example@email.com"
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5">주소</label>
+            <input type="text" value={address} onChange={(e) => onAddressChange(e.target.value)}
+              placeholder="예) 서울시 강남구 테헤란로 123"
+              className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
           </div>
         </div>
-      )}
+      </div>
 
-      {/* 프로필 모드 */}
-      {!isCardImage && (
-        <>
-          {/* 프로필 사진 */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-4">
-            <p className="text-sm font-bold text-slate-700 mb-3">프로필 사진</p>
-            <div className="flex items-center gap-4">
-              <button type="button" onClick={() => profileInput.current?.click()} disabled={profileUploading}
-                className="w-20 h-20 rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden bg-slate-50 flex-shrink-0 disabled:opacity-60">
-                {profileUploading ? <span className="text-2xl animate-spin">⏳</span> :
-                  profilePhoto ? <img src={profilePhoto} alt="프로필" className="w-full h-full object-cover" /> :
-                  <span className="text-3xl">👤</span>}
-              </button>
-              <div>
-                <button type="button" onClick={() => profileInput.current?.click()} disabled={profileUploading}
-                  className="text-blue-500 font-semibold text-sm disabled:opacity-60">
-                  {profileUploading ? '업로드 중...' : profilePhoto ? '사진 변경' : '사진 추가'}
-                </button>
-                <p className="text-xs text-slate-400 mt-1">원형으로 표시됩니다</p>
-                {profilePhoto && (
-                  <button type="button" onClick={() => onProfilePhotoChange('')} className="text-xs text-red-400 mt-1 block">삭제</button>
-                )}
+      {/* 미리보기 */}
+      {cardImage && (
+        <div>
+          <p className="text-xs text-slate-400 mb-2">미리보기 (명함 첫 화면)</p>
+          <div className="relative rounded-2xl overflow-hidden" style={{ aspectRatio: '9/16', maxHeight: 320 }}>
+            <img src={cardImage} alt="미리보기" className="absolute inset-0 w-full h-full object-contain bg-black" />
+            {(name || title) && (
+              <div className="absolute bottom-0 left-0 right-0 px-4 pb-5"
+                style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.65))' }}>
+                {name && <p className="text-white text-base font-bold leading-tight">{name}</p>}
+                {title && <p className="text-white/80 text-xs mt-0.5">{title}</p>}
               </div>
-              <input ref={profileInput} type="file" accept="image/*" className="hidden"
-                onChange={(e) => e.target.files && uploadProfile(e.target.files)} />
-            </div>
+            )}
           </div>
-
-          {/* 기본 정보 */}
-          <div className="space-y-4">
-            <p className="text-sm font-bold text-slate-700">기본 정보</p>
-            <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5">이름 / 상호명</label>
-              <input type="text" value={name} onChange={(e) => onNameChange(e.target.value)}
-                placeholder="예) 김철수, 철수네 카페"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5">직함 / 하는 일</label>
-              <input type="text" value={title} onChange={(e) => onTitleChange(e.target.value)}
-                placeholder="예) 인테리어 전문가, 카페 운영"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5">전화번호</label>
-              <input type="tel" value={phone} onChange={(e) => onPhoneChange(e.target.value)}
-                placeholder="예) 010-1234-5678"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5">팩스번호</label>
-              <input type="tel" value={fax} onChange={(e) => onFaxChange(e.target.value)}
-                placeholder="예) 02-1234-5678"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5">이메일</label>
-              <input type="email" value={email} onChange={(e) => onEmailChange(e.target.value)}
-                placeholder="예) example@email.com"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5">주소</label>
-              <input type="text" value={address} onChange={(e) => onAddressChange(e.target.value)}
-                placeholder="예) 서울시 강남구 테헤란로 123"
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-800 text-base focus:outline-none focus:ring-2 focus:ring-blue-400" />
-              <p className="text-xs text-slate-400 mt-1">명함에 표시되고 길찾기 기능에도 사용됩니다</p>
-            </div>
-          </div>
-
-          {/* 배경색 */}
-          <div>
-            <p className="text-sm font-bold text-slate-700 mb-3">배경색</p>
-            <div className="grid gap-1 mb-2" style={{ gridTemplateColumns: 'repeat(10, 1fr)' }}>
-              {COLOR_PALETTE.flat().map((color) => (
-                <ColorSwatch key={color} color={color} selected={theme === color} onClick={() => onThemeChange(color)} />
-              ))}
-            </div>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="w-5 h-5 rounded border border-slate-200" style={{ backgroundColor: bg }} />
-              <span className="text-xs font-mono text-slate-400 uppercase">{bg}</span>
-            </div>
-          </div>
-
-          {/* 글자색 */}
-          <div>
-            <p className="text-sm font-bold text-slate-700 mb-3">글자색</p>
-            <div className="grid gap-1 mb-2" style={{ gridTemplateColumns: 'repeat(10, 1fr)' }}>
-              {TEXT_COLOR_PALETTE.flat().map((color) => (
-                <ColorSwatch key={color} color={color} selected={textColor === color} onClick={() => onTextColorChange(color)} withBorder />
-              ))}
-            </div>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="w-5 h-5 rounded border border-slate-200" style={{ backgroundColor: tc }} />
-              <span className="text-xs font-mono text-slate-400 uppercase">{tc}</span>
-            </div>
-          </div>
-
-          {/* 미리보기 — 가로 배치 */}
-          <div>
-            <p className="text-xs text-slate-400 mb-2">미리보기 (실제 명함 첫화면)</p>
-            <div className="rounded-2xl p-5 flex items-center gap-4"
-              style={{ background: `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0)), ${bg}` }}>
-              {/* 왼쪽: 원형 사진 */}
-              <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0"
-                style={{ backgroundColor: `${tc}20`, border: `2px solid ${tc}40` }}>
-                {profilePhoto
-                  ? <img src={profilePhoto} alt="프로필" className="w-full h-full object-cover" />
-                  : <span className="text-2xl">👤</span>}
-              </div>
-              {/* 오른쪽: 텍스트 */}
-              <div className="flex flex-col min-w-0">
-                <p className="text-base font-bold truncate" style={{ color: tc }}>{name || '이름'}</p>
-                {(title) && <p className="text-xs mt-0.5 truncate" style={{ color: tc, opacity: 0.8 }}>{title}</p>}
-                {(phone) && <p className="text-xs mt-0.5 truncate" style={{ color: tc, opacity: 0.65 }}>{phone}</p>}
-                {(fax) && <p className="text-xs mt-0.5 truncate" style={{ color: tc, opacity: 0.6 }}>F. {fax}</p>}
-                {(email) && <p className="text-xs mt-0.5 truncate" style={{ color: tc, opacity: 0.6 }}>{email}</p>}
-                {(address) && <p className="text-xs mt-0.5 truncate" style={{ color: tc, opacity: 0.55 }}>{address}</p>}
-              </div>
-            </div>
-          </div>
-        </>
+        </div>
       )}
     </div>
   )
