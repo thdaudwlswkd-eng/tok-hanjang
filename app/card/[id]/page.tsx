@@ -53,10 +53,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
 
-  // 명함 저장 시 카카오톡 OG 캐시 강제 갱신
+  // OG 이미지: 프로필 사진 직접 사용 (API 타임아웃 방지)
+  // card-image 모드이면 cardImage, 아니면 profilePhoto, 없으면 og-image API fallback
   const rawCard = card as Record<string, unknown>
   const v = rawCard.updatedAt instanceof Date ? rawCard.updatedAt.getTime() : 0
-  const imageUrl = `${baseUrl}/api/og-image/${params.id}?v=${v}`
+  const profilePhoto = rawCard.profilePhoto as string | null ?? null
+  const cardImage = rawCard.cardImage as string | null ?? null
+  const imageUrl = (card.heroMode === 'card-image' && cardImage)
+    ? cardImage
+    : (profilePhoto ?? `${baseUrl}/api/og-image/${params.id}?v=${v}`)
   const cardUrl = `${baseUrl}/card/${params.id}`
 
   return {
