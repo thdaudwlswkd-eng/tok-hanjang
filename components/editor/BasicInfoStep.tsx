@@ -207,7 +207,7 @@ export default function BasicInfoStep({
             className="relative rounded-2xl overflow-hidden"
             style={{ aspectRatio: '9/16', maxHeight: 320, background: theme }}
           >
-            <img src={cardImage} alt="미리보기" className="absolute inset-0 w-full h-full" style={{ objectFit: 'cover' }} />
+            <img src={cardImage} alt="미리보기" className="absolute inset-0 w-full h-full" style={{ objectFit: 'contain' }} />
             {(name || title) && (
               <div className="absolute bottom-0 left-0 right-0 px-4 pb-5"
                 style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.6))' }}>
