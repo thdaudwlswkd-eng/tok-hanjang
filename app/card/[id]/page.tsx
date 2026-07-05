@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const card = await getCard(params.id)
   if (!card) return { title: '페이지를 찾을 수 없습니다' }
 
-  const title = '핸드폰으로 똑땙 만드는 명함형 홈페이지'
+  const title = '핸드폰으로 뚝딱 만드는 명함형 홈페이지'
   const description = [card.name, card.title].filter(Boolean).join(' · ')
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
@@ -85,6 +85,9 @@ export default async function CardPage({ params }: Props) {
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
   const shareUrl = `${baseUrl}/card/${card.id}`
 
+  const tc = card.textColor ?? '#ffffff'
+  const bg = card.theme ?? '#0f172a'
+
   const pendingBookings = await prisma.booking.count({ where: { cardId: card.id, status: 'pending' } })
 
   const parsedBookingSettings = card.bookingSettings
@@ -101,9 +104,12 @@ export default async function CardPage({ params }: Props) {
           <OwnerBanner cardId={card.id} pendingBookings={pendingBookings} />
         </div>
 
-        {/* 배경: 명함 이미지 or 테마 컴러 */}
+        {/* 배경: 명함 이미지(테마색 레터박스) or 테마 컬러 */}
         {card.cardImage ? (
-          <div className="absolute inset-0 bg-black flex items-center justify-center">
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ background: bg }}
+          >
             <img
               src={card.cardImage}
               alt={card.name ?? '명함'}
@@ -114,7 +120,7 @@ export default async function CardPage({ params }: Props) {
         ) : (
           <div
             className="absolute inset-0"
-            style={{ background: `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0)), ${card.theme ?? '#0f172a'}` }}
+            style={{ background: `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0)), ${bg}` }}
           />
         )}
 
@@ -122,13 +128,13 @@ export default async function CardPage({ params }: Props) {
         {(card.name || card.title) && (
           <div
             className="absolute bottom-0 left-0 right-0 px-6 pb-16"
-            style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.65))' }}
+            style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.6))' }}
           >
             {card.name && (
-              <p className="text-white text-2xl font-bold leading-tight drop-shadow">{card.name}</p>
+              <p className="text-2xl font-bold leading-tight drop-shadow" style={{ color: tc }}>{card.name}</p>
             )}
             {card.title && (
-              <p className="text-white/80 text-sm mt-1 drop-shadow">{card.title}</p>
+              <p className="text-sm mt-1 drop-shadow" style={{ color: tc, opacity: 0.85 }}>{card.title}</p>
             )}
           </div>
         )}
@@ -141,7 +147,7 @@ export default async function CardPage({ params }: Props) {
 
       <QuickContactBar phone={card.phone} kakaoLink={card.kakaoLink} variant="inline" />
 
-      {/* 연락선 정보 */}
+      {/* 연락처 정보 */}
       {(card.phone || (card as RawCard).fax || (card as RawCard).email || card.address) && (
         <section className="px-5 py-5 border-b border-slate-100">
           <div className="space-y-3">
