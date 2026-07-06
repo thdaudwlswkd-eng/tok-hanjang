@@ -98,52 +98,48 @@ export default async function CardPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-white max-w-lg mx-auto pb-24">
 
-      {/* 명함 첫 화면 */}
-      <section className="relative overflow-hidden" style={{ height: '100svh' }}>
-        {/* 오너 배너 */}
-        <div className="absolute top-0 left-0 right-0 z-10">
-          <OwnerBanner cardId={card.id} pendingBookings={pendingBookings} />
-        </div>
+      {/* ── 명함 첫 화면 ── */}
+      <section>
 
-        {/* 배경: 명함 이미지(테마색 레터박스) or 테마 컬러 */}
-        {card.cardImage ? (
-          <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{ background: bg }}
-          >
+        {/* 1. 이미지/명함 영역: 너비 꽉 차게, 높이는 이미지 비율에 맞게 자동 */}
+        <div className="relative" style={{ background: bg }}>
+          <div className="absolute top-0 left-0 right-0 z-10">
+            <OwnerBanner cardId={card.id} pendingBookings={pendingBookings} />
+          </div>
+
+          {card.cardImage ? (
             <img
               src={card.cardImage}
               alt={card.name ?? '명함'}
-              className="w-full h-full"
-              style={{ objectFit: 'contain' }}
+              className="w-full block"
             />
-          </div>
-        ) : (
-          <div
-            className="absolute inset-0"
-            style={{ background: `linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0)), ${bg}` }}
-          />
-        )}
+          ) : (
+            /* 이미지 없을 때: 테마 컬러 배경 */
+            <div
+              style={{
+                height: '50svh',
+                background: `linear-gradient(135deg, rgba(0,0,0,0.15), rgba(0,0,0,0)), ${bg}`,
+              }}
+            />
+          )}
+        </div>
 
-        {/* 이름 + 직함 오버레이 (하단) */}
+        {/* 2. 이름 / 직함 영역 */}
         {(card.name || card.title) && (
-          <div
-            className="absolute bottom-0 left-0 right-0 px-6 pb-16"
-            style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.6))' }}
-          >
+          <div className="px-6 py-5" style={{ background: bg }}>
             {card.name && (
-              <p className="text-2xl font-bold leading-tight drop-shadow" style={{ color: tc }}>{card.name}</p>
+              <p className="text-xl font-bold leading-tight" style={{ color: tc }}>
+                {card.name}
+              </p>
             )}
             {card.title && (
-              <p className="text-sm mt-1 drop-shadow" style={{ color: tc, opacity: 0.85 }}>{card.title}</p>
+              <p className="text-sm mt-1" style={{ color: tc, opacity: 0.8 }}>
+                {card.title}
+              </p>
             )}
           </div>
         )}
 
-        {/* 스크롤 화살표 */}
-        <div className="absolute bottom-5 left-0 right-0 flex justify-center z-10">
-          <span className="text-white/40 text-2xl animate-bounce">&#x2193;</span>
-        </div>
       </section>
 
       <QuickContactBar phone={card.phone} kakaoLink={card.kakaoLink} variant="inline" />
