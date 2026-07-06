@@ -116,7 +116,7 @@ function CreatePageInner() {
     if (!loaded) return
     const timer = setTimeout(() => { saveRef.current() }, 800)
     return () => clearTimeout(timer)
-  }, [photos, cardImage, slideshowUrl, loaded])
+  }, [photos, cardImage, slideshowUrl, loaded, name, title, theme, textColor, bio, career, phone, fax, email, address, kakaoLink, videoUrl, hours, snsLinks, bookingEnabled, bookingSettings])
 
   async function saveField(fields: Record<string, unknown>) {
     try {
@@ -371,16 +371,4 @@ function CreatePageInner() {
               </button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-export default function CreatePage() {
-  return (
-    <Suspense>
-      <CreatePageInner />
-    </Suspense>
-  )
-}
+        </di
