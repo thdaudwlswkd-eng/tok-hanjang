@@ -48,8 +48,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const card = await getCard(params.id)
   if (!card) return { title: '페이지를 찾을 수 없습니다' }
 
-  const title = '핸드폰으로 뚝딱 만드는 명함형 홈페이지'
-  const description = [card.name, card.title].filter(Boolean).join(' · ')
+  const title = card.name ?? '핸드폰으로 뚝딱 만드는 명함형 홈페이지'
+  const description = card.title ?? card.name ?? '핸드폰에서 뚝딱 만들어지는 명함형 홈페이지'
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
 
