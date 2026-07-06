@@ -124,7 +124,8 @@ export default async function CardPage({ params }: Props) {
           )}
         </div>
 
-        {/* 2. 이름 / 직함 영역 — 배경색·글자색 항상 적용 */}
+        {/* 2. 이름 / 직함 영역 */}
+        {/* 이름/직함 — 배경색·글자색 항상 적용 */}
         <div className="px-6 py-5" style={{ background: bg }}>
           {card.name && (
             <p className="text-xl font-bold leading-tight" style={{ color: tc }}>
@@ -223,4 +224,3 @@ export default async function CardPage({ params }: Props) {
     </div>
   )
 }
-                                    

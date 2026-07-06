@@ -371,4 +371,16 @@ function CreatePageInner() {
               </button>
             </div>
           </div>
-        </di
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function CreatePage() {
+  return (
+    <Suspense>
+      <CreatePageInner />
+    </Suspense>
+  )
+}
