@@ -254,10 +254,6 @@ function CreatePageInner() {
             onFaxChange={setFax}
             onEmailChange={setEmail}
             onAddressChange={setAddress}
-            theme={theme}
-            onThemeChange={setTheme}
-            textColor={textColor}
-            onTextColorChange={setTextColor}
           />
         )}
         {step === 1 && (

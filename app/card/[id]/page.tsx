@@ -86,8 +86,6 @@ export default async function CardPage({ params }: Props) {
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
   const shareUrl = `${baseUrl}/card/${card.id}`
 
-  const tc = card.textColor ?? '#ffffff'
-  const bg = card.theme ?? '#0f172a'
 
   const pendingBookings = await prisma.booking.count({ where: { cardId: card.id, status: 'pending' } })
 
@@ -102,7 +100,7 @@ export default async function CardPage({ params }: Props) {
       <section>
 
         {/* 1. 이미지/명함 영역: 너비 꽉 차게, 높이는 이미지 비율에 맞게 자동 */}
-        <div className="relative" style={{ background: bg }}>
+        <div className="relative">
           <div className="absolute top-0 left-0 right-0 z-10">
             <OwnerBanner cardId={card.id} pendingBookings={pendingBookings} />
           </div>
@@ -115,25 +113,19 @@ export default async function CardPage({ params }: Props) {
             />
           ) : (
             /* 이미지 없을 때: 테마 컬러 배경 */
-            <div
-              style={{
-                height: '50svh',
-                background: `linear-gradient(135deg, rgba(0,0,0,0.15), rgba(0,0,0,0)), ${bg}`,
-              }}
-            />
+            <div className="bg-slate-100" style={{ height: '50svh' }} />
           )}
         </div>
 
         {/* 2. 이름 / 직함 영역 */}
-        {/* 이름/직함 — 배경색·글자색 항상 적용 */}
-        <div className="px-6 py-5" style={{ background: bg }}>
+        <div className="px-6 py-5 bg-white border-b border-slate-100">
           {card.name && (
-            <p className="text-xl font-bold leading-tight" style={{ color: tc }}>
+            <p className="text-xl font-bold leading-tight text-slate-800">
               {card.name}
             </p>
           )}
           {card.title && (
-            <p className="text-sm mt-1" style={{ color: tc, opacity: 0.8 }}>
+            <p className="text-sm mt-1 text-slate-500">
               {card.title}
             </p>
           )}

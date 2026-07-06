@@ -1,7 +1,6 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { COLOR_PALETTE, TEXT_COLOR_PALETTE } from '@/lib/types'
 import { compressImage, uploadOneFile } from '@/lib/upload-utils'
 
 interface Props {
@@ -19,37 +18,12 @@ interface Props {
   onFaxChange: (v: string) => void
   onEmailChange: (v: string) => void
   onAddressChange: (v: string) => void
-  theme: string
-  onThemeChange: (c: string) => void
-  textColor: string
-  onTextColorChange: (c: string) => void
-}
-
-function ColorSwatch({ color, selected, onClick, withBorder = false }: {
-  color: string; selected: boolean; onClick: () => void; withBorder?: boolean
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="aspect-square rounded transition-transform"
-      style={{
-        backgroundColor: color,
-        border: withBorder ? '1px solid #e2e8f0' : undefined,
-        outline: selected ? '2.5px solid #3b82f6' : undefined,
-        outlineOffset: selected ? '2px' : undefined,
-        transform: selected ? 'scale(1.15)' : undefined,
-        boxShadow: selected ? '0 0 0 1px #fff' : undefined,
-      }}
-      aria-label={color}
-    />
-  )
 }
 
 export default function BasicInfoStep({
   cardImage, onCardImageChange,
   name, title, phone, fax, email, address,
   onNameChange, onTitleChange, onPhoneChange, onFaxChange, onEmailChange, onAddressChange,
-  theme, onThemeChange, textColor, onTextColorChange,
 }: Props) {
   const [cardImageUploading, setCardImageUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
@@ -102,50 +76,6 @@ export default function BasicInfoStep({
         )}
         <input ref={cardImageInput} type="file" accept="image/*" className="hidden"
           onChange={(e) => e.target.files && uploadCardImage(e.target.files)} />
-      </div>
-
-      {/* 배경색 */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4">
-        <p className="text-sm font-bold text-slate-700 mb-3">배경색</p>
-        <div className="space-y-1.5">
-          {COLOR_PALETTE.map((row, ri) => (
-            <div key={ri} className="grid grid-cols-10 gap-1.5">
-              {row.map((c) => (
-                <ColorSwatch
-                  key={c} color={c} selected={theme === c}
-                  onClick={() => onThemeChange(c)}
-                  withBorder={['#f8fafc','#fef2f2','#fff7ed','#fffbeb','#f0fdf4','#ecfeff','#eff6ff','#eef2ff','#faf5ff','#fdf4ff'].includes(c)}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg border border-slate-200 flex-shrink-0" style={{ backgroundColor: theme }} />
-          <span className="text-xs text-slate-400 font-mono">{theme}</span>
-        </div>
-      </div>
-
-      {/* 글자색 */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-4">
-        <p className="text-sm font-bold text-slate-700 mb-3">글자색</p>
-        <div className="space-y-1.5">
-          {TEXT_COLOR_PALETTE.map((row, ri) => (
-            <div key={ri} className="grid grid-cols-10 gap-1.5">
-              {row.map((c) => (
-                <ColorSwatch
-                  key={c} color={c} selected={textColor === c}
-                  onClick={() => onTextColorChange(c)}
-                  withBorder={c === '#ffffff'}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
-        <div className="mt-3 flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg border border-slate-200 flex-shrink-0" style={{ backgroundColor: textColor }} />
-          <span className="text-xs text-slate-400 font-mono">{textColor}</span>
-        </div>
       </div>
 
       {/* 기본 정보 — 첫 화면 노출 */}
@@ -205,14 +135,14 @@ export default function BasicInfoStep({
           <p className="text-xs text-slate-400 mb-2">미리보기 (명함 첫 화면)</p>
           <div className="rounded-2xl overflow-hidden border border-slate-200">
             {/* 이미지: 너비 꽉 차게, 자연 비율 유지 */}
-            <div style={{ background: theme }}>
+            <div>
               <img src={cardImage} alt="미리보기" className="w-full block" />
             </div>
             {/* 이름/직함 */}
             {(name || title) && (
-              <div className="px-4 py-3" style={{ background: theme }}>
-                {name && <p className="text-sm font-bold leading-tight" style={{ color: textColor }}>{name}</p>}
-                {title && <p className="text-xs mt-0.5" style={{ color: textColor, opacity: 0.8 }}>{title}</p>}
+              <div className="px-4 py-3 bg-white border-t border-slate-100">
+                {name && <p className="text-sm font-bold leading-tight text-slate-800">{name}</p>}
+                {title && <p className="text-xs mt-0.5 text-slate-500">{title}</p>}
               </div>
             )}
           </div>
