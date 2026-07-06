@@ -8,6 +8,7 @@ import MediaStep from '@/components/editor/MediaStep'
 import SnsKakaoStep from '@/components/editor/SnsKakaoStep'
 import BookingHoursStep, { BookingSettings, DEFAULT_BOOKING_SETTINGS } from '@/components/editor/BookingHoursStep'
 import ContactLocationStep from '@/components/editor/ContactLocationStep'
+import PaywallScreen from '@/components/editor/PaywallScreen'
 import { BusinessHours, SnsLinks, DEFAULT_THEME_COLOR, DEFAULT_TEXT_COLOR } from '@/lib/types'
 
 const STEPS = [
@@ -49,13 +50,22 @@ function CreatePageInner() {
   const [hours, setHours] = useState<BusinessHours | null>(null)
   const [cardImage, setCardImage] = useState('')
   const [slideshowUrl, setSlideshowUrl] = useState('')
+  const [paid, setPaid] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
   // 기존 저장 데이터 불러오기
   useEffect(() => {
     if (!id) return
+    // 결제 상태 확인
     const owned: string[] = JSON.parse(localStorage.getItem('myCards') || '[]')
-    if (!owned.includes(id)) { owned.push(id); localStorage.setItem('myCards', JSON.stringify(owned)) }
+    const isPaid = localStorage.getItem('tok_paid') === 'true'
+    // 기존 카드 소유자(myCards에 있음) 또는 결제 완료 → 허용
+    if (owned.includes(id) || isPaid) {
+      setPaid(true)
+      // myCards에 없으면 추가 (결제 완료 신규 사용자)
+      if (!owned.includes(id)) { owned.push(id); localStorage.setItem('myCards', JSON.stringify(owned)) }
+    }
+    // 미결제 신규 사용자는 myCards에 추가하지 않음 (결제 후 handleUnlock에서 추가)
     fetch(`/api/cards/${id}`)
       .then(r => r.ok ? r.json() : null)
       .then(data => {
@@ -92,6 +102,14 @@ function CreatePageInner() {
     bookingSettings: JSON.stringify(bookingSettings),
     videoUrl, fax, email, address, heroMode: 'card-image', cardImage, slideshowUrl, hours,
   }), [photos, profilePhoto, name, title, bio, career, theme, textColor, phone, kakaoLink, snsLinks, bookingEnabled, bookingSettings, videoUrl, fax, email, address, cardImage, slideshowUrl, hours])
+
+  function handleUnlock() {
+    localStorage.setItem('tok_paid', 'true')
+    // myCards에 추가 (이후 방문 시 즉시 허용)
+    const owned: string[] = JSON.parse(localStorage.getItem('myCards') || '[]')
+    if (id && !owned.includes(id)) { owned.push(id); localStorage.setItem('myCards', JSON.stringify(owned)) }
+    setPaid(true)
+  }
 
   async function save() {
     setSaving(true); setSaveError('')
@@ -187,6 +205,8 @@ function CreatePageInner() {
       <p className="text-slate-400 text-sm">불러오는 중...</p>
     </div>
   )
+
+  if (!paid) return <PaywallScreen onUnlock={handleUnlock} />
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col max-w-lg mx-auto">
