@@ -124,21 +124,19 @@ export default async function CardPage({ params }: Props) {
           )}
         </div>
 
-        {/* 2. 이름 / 직함 영역 */}
-        {(card.name || card.title) && (
-          <div className="px-6 py-5" style={{ background: bg }}>
-            {card.name && (
-              <p className="text-xl font-bold leading-tight" style={{ color: tc }}>
-                {card.name}
-              </p>
-            )}
-            {card.title && (
-              <p className="text-sm mt-1" style={{ color: tc, opacity: 0.8 }}>
-                {card.title}
-              </p>
-            )}
-          </div>
-        )}
+        {/* 2. 이름 / 직함 영역 — 배경색·글자색 항상 적용 */}
+        <div className="px-6 py-5" style={{ background: bg }}>
+          {card.name && (
+            <p className="text-xl font-bold leading-tight" style={{ color: tc }}>
+              {card.name}
+            </p>
+          )}
+          {card.title && (
+            <p className="text-sm mt-1" style={{ color: tc, opacity: 0.8 }}>
+              {card.title}
+            </p>
+          )}
+        </div>
 
       </section>
 
@@ -225,3 +223,4 @@ export default async function CardPage({ params }: Props) {
     </div>
   )
 }
+                                    
