@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic'
 import { prisma } from '@/lib/db'
 import { CardData, BusinessHours, SnsLinks } from '@/lib/types'
 import Slideshow from '@/components/viewer/Slideshow'
+import PhotoGallery from '@/components/viewer/PhotoGallery'
 import QuickContactBar from '@/components/viewer/QuickContactBar'
 import BookingSection from '@/components/viewer/BookingSection'
 import SnsSection from '@/components/viewer/SnsSection'
@@ -177,6 +178,10 @@ export default async function CardPage({ params }: Props) {
             )}
           </div>
         </section>
+      )}
+
+      {card.photos && card.photos.length > 0 && (
+        <PhotoGallery photos={card.photos} />
       )}
 
       {card.photos && card.photos.length > 0 && (
