@@ -203,16 +203,16 @@ export default function BasicInfoStep({
       {cardImage && (
         <div>
           <p className="text-xs text-slate-400 mb-2">미리보기 (명함 첫 화면)</p>
-          <div
-            className="relative rounded-2xl overflow-hidden"
-            style={{ aspectRatio: '9/16', maxHeight: 320, background: theme }}
-          >
-            <img src={cardImage} alt="미리보기" className="absolute inset-0 w-full h-full" style={{ objectFit: 'contain' }} />
+          <div className="rounded-2xl overflow-hidden border border-slate-200">
+            {/* 이미지: 너비 꽉 차게, 자연 비율 유지 */}
+            <div style={{ background: theme }}>
+              <img src={cardImage} alt="미리보기" className="w-full block" />
+            </div>
+            {/* 이름/직함 */}
             {(name || title) && (
-              <div className="absolute bottom-0 left-0 right-0 px-4 pb-5"
-                style={{ background: 'linear-gradient(transparent, rgba(0,0,0,0.6))' }}>
-                {name && <p className="text-base font-bold leading-tight drop-shadow" style={{ color: textColor }}>{name}</p>}
-                {title && <p className="text-xs mt-0.5 drop-shadow" style={{ color: textColor, opacity: 0.85 }}>{title}</p>}
+              <div className="px-4 py-3" style={{ background: theme }}>
+                {name && <p className="text-sm font-bold leading-tight" style={{ color: textColor }}>{name}</p>}
+                {title && <p className="text-xs mt-0.5" style={{ color: textColor, opacity: 0.8 }}>{title}</p>}
               </div>
             )}
           </div>
@@ -221,3 +221,4 @@ export default function BasicInfoStep({
     </div>
   )
 }
+                                                                                  
